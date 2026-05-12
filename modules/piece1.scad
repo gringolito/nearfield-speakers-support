@@ -1,6 +1,5 @@
 module piece1_base(side = "left") {
     sign = (side == "left") ? 1 : -1;
-    screw_z = base_t + boss1_protrusion - tenon_l / 2;
 
     difference() {
         union() {
@@ -35,9 +34,10 @@ module piece1_base(side = "left") {
                     depth = tenon_l
                 );
 
-        // M5 screw hole through boss side face (lateral clamping screw)
-        translate([base_w/2, base_h/2 - boss_h/2 - 0.1, screw_z])
-            rotate([-90, 0, 0])
-                cylinder(d = screw_m5_d, h = boss_h + 0.2, $fn = 20);
+        // M5 axial screw access hole through boss top face
+        // Screw passes through boss into tenon end-face insert (piece2)
+        translate([base_w/2, base_h/2, base_t + boss1_protrusion + 0.1])
+            rotate([180, 0, 0])
+                cylinder(d = screw_m5_d, h = boss1_protrusion + tenon_l + 0.2, $fn = 20);
     }
 }
