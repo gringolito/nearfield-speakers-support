@@ -4,53 +4,52 @@ module piece2_arm() {
             // arm body
             cube([arm_total_l, arm_w, arm_h]);
 
-            // ribs
-            _rib(side = 0);
+            // Y=0 rib: extends from Y=−rib_t to Y=0, Z=arm_h to arm_h+rib_depth
+            _rib();
+            // Y=arm_w rib: mirror of Y=0 rib
             translate([0, arm_w, 0])
                 mirror([0, 1, 0])
-                    _rib(side = 1);
+                    _rib();
 
             // rib root fillets
             _rib_fillet(y_offset = 0,     mirror_y = false);
             _rib_fillet(y_offset = arm_w, mirror_y = true);
         }
 
-        // heat-set insert holes in tenon end faces
-        // Wall-side tenon: insert enters from X=0 face (pointing -X)
-        translate([0, arm_w/2, arm_h/2])
+        // Wall-side tenon insert hole (X=0 face, +0.1 epsilon past face)
+        translate([-0.1, arm_w/2, arm_h/2])
             rotate([0, 90, 0])
-                cylinder(d = insert_m5_od, h = insert_m5_depth + 0.1, $fn = 20);
+                cylinder(d = insert_m5_od, h = insert_m5_depth + 0.2, $fn = 20);
 
-        // Platform-side tenon: insert enters from X=arm_total_l face (pointing +X)
-        translate([arm_total_l, arm_w/2, arm_h/2])
+        // Platform-side tenon insert hole (X=arm_total_l face, +0.1 epsilon)
+        translate([arm_total_l + 0.1, arm_w/2, arm_h/2])
             rotate([0, -90, 0])
-                cylinder(d = insert_m5_od, h = insert_m5_depth + 0.1, $fn = 20);
+                cylinder(d = insert_m5_od, h = insert_m5_depth + 0.2, $fn = 20);
     }
 }
 
-// Single triangular rib. Extruded rib_t mm along Y (negative Y direction).
-// Triangular profile is in the XZ plane.
-module _rib(side) {
-    translate([0, -rib_t, arm_h])
-        linear_extrude(height = rib_t) {
-            polygon([
-                [0,           0        ],  // wall end, arm bottom
-                [arm_total_l, 0        ],  // platform end, arm bottom
-                [0,           rib_depth]   // wall end, rib tip
-            ]);
-        }
+// Triangular rib: profile in XZ plane, rib_t thick in -Y.
+// Wall end (X=0): full rib_depth; platform end (X=arm_total_l): tapers to 0.
+module _rib() {
+    translate([0, 0, arm_h])
+        rotate([90, 0, 0])
+            linear_extrude(height = rib_t, convexity = 2)
+                polygon([
+                    [0,           0        ],
+                    [arm_total_l, 0        ],
+                    [0,           rib_depth]
+                ]);
 }
 
-// Root fillet at arm-body/rib junction, running the full arm length.
+// Quarter-cylinder fillet at arm-body/rib junction, running the full arm length.
 module _rib_fillet(y_offset, mirror_y) {
     r = fillet_rib;
-    translate([0, y_offset + (mirror_y ? -r : 0), arm_h])
-        rotate([mirror_y ? 180 : 0, 0, 0])
-            linear_extrude(height = arm_total_l, convexity = 2)
-                rotate([0, 0, 90])
-                    difference() {
-                        square([r, r]);
-                        translate([r, r]) circle(r = r, $fn = 16);
-                    }
+    translate([0, y_offset, arm_h])
+        translate([arm_total_l, 0, 0])
+            rotate([0, -90, 0]) {
+                if (!mirror_y)
+                    mirror([0, 1, 0]) fillet_rod(r, arm_total_l);
+                else
+                    fillet_rod(r, arm_total_l);
+            }
 }
-
