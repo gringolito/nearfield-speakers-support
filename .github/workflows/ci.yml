@@ -71,7 +71,7 @@ jobs:
           git add "pr-${PR}/"
           git diff --staged --quiet && exit 0
           git commit -m "ci: renders for PR #${PR} [skip ci]"
-          git push origin ci-renders
+          git push origin HEAD:ci-renders
 
       - name: Push renders to ci-renders/latest (master)
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -93,7 +93,7 @@ jobs:
           git add latest/
           git diff --staged --quiet && exit 0
           git commit -m "ci: update latest renders from master [skip ci]"
-          git push origin ci-renders
+          git push origin HEAD:ci-renders
 
       - name: Upsert render comment
         if: github.event_name == 'pull_request'
