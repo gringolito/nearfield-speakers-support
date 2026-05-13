@@ -5,6 +5,7 @@ include <modules/common.scad>;
 include <modules/joinery.scad>;
 include <modules/base.scad>;
 include <modules/platform.scad>;
+include <modules/arm.scad>;
 
 /* [Render] */
 // 0 = assembly preview, 1 = base, 2 = arm-right, 3 = arm-left, 4 = platform
@@ -76,7 +77,21 @@ module base_module() {
                wall_screw_spacing = wall_screw_spacing,
                insert_spacing = insert_spacing);
 }
-module arm_module()        { cube([arm_w, arm_length, arm_root_h]); }
+module arm_module() {
+    arm(arm_length = arm_length,
+        toe_in_deg = toe_in_deg,
+        tilt_deg = tilt_deg,
+        arm_root_h = arm_root_h,
+        arm_tip_h = arm_tip_h,
+        arm_w = arm_w,
+        tenon_h_base = tenon_h_base,
+        tenon_w_base = tenon_w_base,
+        tenon_l_base = tenon_l_base,
+        tenon_h_plat = tenon_h_plat,
+        tenon_w_plat = tenon_w_plat,
+        tenon_l_plat = tenon_l_plat,
+        insert_spacing = insert_spacing);
+}
 module platform_module() {
     platform_body(plat_depth = plat_depth,
                   plat_w = plat_w,
