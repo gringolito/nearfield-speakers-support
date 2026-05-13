@@ -34,7 +34,7 @@ jobs:
               --camera=0,0,0,55,0,25,500 \
               --autocenter \
               --viewall \
-              --colorscheme=Starnight \
+              --colorscheme=BeforeDawn \
               -o "renders/${NAMES[$piece]}.png" \
               nearfield-wall-mount.scad \
               -D "render_piece=${piece}"
