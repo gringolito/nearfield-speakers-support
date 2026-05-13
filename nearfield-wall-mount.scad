@@ -107,7 +107,34 @@ module platform_module() {
                   tenon_clearance = tenon_clearance,
                   insert_spacing = insert_spacing);
 }
-module assembly_preview()  { base_module(); }
+module assembly_preview() {
+    // Show the right-hand bracket assembled.
+    // Base in its real-world orientation: wall-facing face at y = 0, front at y = base_t.
+    // Arm root tenon plugs into base's mortise.
+    // Platform attaches at the arm tip.
+
+    // Base — rotated so its front face is along +Y (matching arm root direction)
+    color("steelblue")
+        rotate([90, 0, 0])
+            translate([-base_w/2, -base_h/2, -base_t])
+                base_module();
+
+    // Arm — origin at base's mortise location
+    color("seagreen")
+        translate([0, base_t, 0])
+            arm_module();
+
+    // Platform — translated to the arm tip
+    tip_pos   = arm_centerline_pos(1, arm_length, toe_in_deg, tilt_deg);
+    tip_yaw   = arm_yaw(1, toe_in_deg);
+    tip_pitch = arm_pitch(1, tilt_deg);
+    color("darkorange")
+        translate([tip_pos[0], base_t + tip_pos[1], tip_pos[2]])
+            rotate([0, 0, tip_yaw])
+            rotate([tip_pitch, 0, 0])
+                translate([0, tenon_l_plat, 0])
+                    platform_module();
+}
 
 // --- Dispatch ---
 if      (render_piece == 0) assembly_preview();
