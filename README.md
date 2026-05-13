@@ -33,14 +33,14 @@ The bracket is three separate printed pieces per speaker:
 | Piece 2 — Arm | Transfers load from platform to base; two triangular ribs for rigidity | 108 × 53 mm |
 | Piece 3 — Platform | Supports the speaker; encodes downward tilt angle; front safety lip | 200 × 135 mm |
 
-```
+```text
 WALL                                                               FRONT
  │
  │  ┌──────────┐ tenon → ┌────┬───────────────────┐ tenon → ┌───────────────────┬──┐
  │  │ PIECE 1  │         │ R  │    PIECE 2        │         │    PIECE 3        │  │
  │  │  BASE    │◄mortise │ I  │    ARM            │◄mortise │    PLATFORM       │ ▲│
  │  │  26° toe │  26°    │ B  │    (straight)     │  12°    │    200 × 135 mm   │  │
- │  └──────────┘         └─── └───────────────────┘  tilt   └───────────────────┴──┘
+ │  └──────────┘         └────┴───────────────────┘  tilt   └───────────────────┴──┘
  │  160×80×10 mm                                                            lip
 ```
 
@@ -186,17 +186,36 @@ openscad -o stl/piece3-platform.stl -D 'render_piece=3' nearfield-wall-mount.sca
 
 ## Print settings
 
-| Piece | Bed orientation | Supports | Infill | Perimeters |
-|---|---|---|---|---|
-| Piece 1 — Base | Rear face flat on bed | None | 40% | 4 |
-| Piece 2 — Arm | Top face flat, ribs pointing up | None | 50% | 4 |
-| Piece 3 — Platform | Bottom face flat, boss pointing up | None | 40% | 4 |
+### Material
 
-**Material:** PLA+ is recommended. In environments that regularly exceed ~40°C (near windows, rack equipment), use PETG to avoid long-term creep under sustained load.
+| Material | Notes |
+| --- | --- |
+| **PETG** | Best balance of strength, thermal stability, and printability. Handles the sustained load and minor heat without creep. |
+| **ABS / ASA** | Better long-term structural stability and heat resistance. ASA adds UV resistance — worth it if the brackets are near a window. |
+| **PLA+** | Can deform under sustained load above ~40°C, and may lose rigidity over time near heat sources. Acceptable for cool, stable environments. |
 
-**Temperature (PLA+):** 215–220°C nozzle / 60°C bed.
+### Slicer settings
 
-**Recommended workflow:** Print Piece 2 first. Validate the tenon fit with `tests/fit_test.scad` before printing Pieces 1 and 3. Adjust `tenon_clearance` if needed.
+| Setting | Value |
+| --- | --- |
+| Layer height | 0.24 mm |
+| Perimeters | 6 (minimum 5) |
+| Infill | 45–55% (minimum 35%) |
+| Infill pattern | Gyroid or cubic |
+| Top/bottom layers | 6 minimum |
+| Supports | None |
+
+### Bed orientation
+
+| Piece | Flat face on bed | Notes |
+| --- | --- | --- |
+| Piece 1 — Base | Rear face (wall contact) | Boss and plate build upward; wall-contact surface is smooth first layer |
+| Piece 2 — Arm | Top face, ribs up | Layer planes parallel to the arm's bending load — strongest direction |
+| Piece 3 — Platform | Bottom face, boss up | Shelf and lip build upward; mortise cavity bridges cleanly without support |
+
+### Workflow
+
+Print Piece 2 first. Use `tests/fit_test.scad` to validate the tenon fit against a small test mortise before printing Pieces 1 and 3. Adjust `tenon_clearance` if needed, then print the remaining pieces.
 
 ---
 
