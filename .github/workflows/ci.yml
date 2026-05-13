@@ -32,6 +32,8 @@ jobs:
             xvfb-run -a openscad \
               --render \
               --camera=0,0,0,55,0,25,500 \
+              --autocenter \
+              --viewall \
               --colorscheme=Starnight \
               -o "renders/${NAMES[$piece]}.png" \
               nearfield-wall-mount.scad \
