@@ -29,7 +29,7 @@ jobs:
           mkdir -p renders
           declare -A NAMES=([0]=assembly [1]=piece1 [2]=piece2 [3]=piece3)
           for piece in 0 1 2 3; do
-            xvfb-run openscad \
+            xvfb-run -a openscad \
               --render \
               --camera=0,0,0,55,0,25,500 \
               --colorscheme=Starnight \
