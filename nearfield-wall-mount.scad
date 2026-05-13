@@ -2,6 +2,8 @@
 // Top-level: parameters (Customizer-friendly) + render_piece dispatch.
 
 include <modules/common.scad>;
+include <modules/joinery.scad>;
+include <modules/base.scad>;
 
 /* [Render] */
 // 0 = assembly preview, 1 = base, 2 = arm-right, 3 = arm-left, 4 = platform
@@ -61,7 +63,18 @@ assert(arm_tip_h <= arm_root_h,
        "arm must taper inward (tip height <= root height)");
 
 // --- Stub modules (filled in by subsequent tasks) ---
-module base_module()       { cube([base_w, base_h, base_t]); }
+module base_module() {
+    base_plate(base_h = base_h,
+               base_w = base_w,
+               base_t = base_t,
+               tenon_h_base = tenon_h_base,
+               tenon_w_base = tenon_w_base,
+               tenon_l_base = tenon_l_base,
+               tenon_clearance = tenon_clearance,
+               wall_screw_count = wall_screw_count,
+               wall_screw_spacing = wall_screw_spacing,
+               insert_spacing = insert_spacing);
+}
 module arm_module()        { cube([arm_w, arm_length, arm_root_h]); }
 module platform_module()   { cube([plat_w, plat_depth, plat_t]); }
 module assembly_preview()  { base_module(); }
