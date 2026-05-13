@@ -71,7 +71,29 @@ jobs:
           git add "pr-${PR}/"
           git diff --staged --quiet && exit 0
           git commit -m "ci: renders for PR #${PR} [skip ci]"
-          git push origin ci-renders
+          git push origin HEAD:ci-renders
+
+      - name: Push renders to ci-renders/latest (master)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+          if git ls-remote --exit-code origin ci-renders >/dev/null 2>&1; then
+            git fetch origin ci-renders
+            git worktree add /tmp/ci-renders origin/ci-renders
+          else
+            git worktree add --orphan -b ci-renders /tmp/ci-renders
+          fi
+
+          mkdir -p /tmp/ci-renders/latest
+          cp renders/*.png /tmp/ci-renders/latest/
+
+          cd /tmp/ci-renders
+          git add latest/
+          git diff --staged --quiet && exit 0
+          git commit -m "ci: update latest renders from master [skip ci]"
+          git push origin HEAD:ci-renders
 
       - name: Upsert render comment
         if: github.event_name == 'pull_request'
