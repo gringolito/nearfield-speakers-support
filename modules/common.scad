@@ -14,7 +14,7 @@ SCREW_M5_HEAD_H  = 5.0;   // M5 SHCS head height (for counterbore)
 // --- M6 wall screw geometry ---
 WALL_SCREW_D       = 6.5;   // clearance for 6 mm wood screw
 WALL_SCREW_HEAD_D  = 12.0;  // countersunk head diameter
-WALL_SCREW_HEAD_H  = 4.0;   // counterbore depth
+WALL_SCREW_HEAD_H  = 3.0;   // counterbore depth
 
 // --- Print tolerances ---
 PRINT_EPSILON = 0.01;       // overlap to avoid coplanar-face artifacts
@@ -25,7 +25,7 @@ module preview_marker(pos = [0,0,0], r = 2, color = "red") {
 
 // rounded_cube(x, y, z, r, center): rectangular solid with all 12 edges and
 //   8 corners spherically rounded to radius r. Behaves like cube() when r=0.
-//   center=false (default) places the corner at the origin, matching cube() behaviour.
+//   center=false (default) places the corner at the origin, matching cube() behavior.
 //   Uses hull() of 8 spheres — no minkowski, no render() needed.
 module rounded_cube(x, y, z, r, center = false) {
     r_ = min(r, x/2, y/2, z/2);

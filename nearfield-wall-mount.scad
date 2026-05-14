@@ -16,7 +16,7 @@ toe_in_deg = 26; // [20:1:30]
 tilt_deg   = 12; // [10:1:15]
 
 /* [Arm geometry] */
-arm_length  = 70;  // [50:5:100]
+arm_length  = 50;  // [50:5:100]
 arm_root_h  = 60;  // [50:5:70]
 arm_tip_h   = 32;  // [25:5:40]
 arm_w       = 40;  // [35:5:50]
@@ -24,27 +24,42 @@ arm_w       = 40;  // [35:5:50]
 /* [Base geometry] */
 base_h = 140; // [160:10:220]
 base_w = 90; // [80:10:140]
-base_t = 10;  // [10:2:28]
+base_t = 6;  // [10:2:28]
+
+/* [Base boss] */
+// Frontal boss at the arm joint. Sized to match the arm's root cross-section
+// so the boss visually reads as a continuation of the arm into the base. Its
+// depth (in +Z) carries the lateral clamping screws into heat-set inserts in
+// the arm root tenon. The boss front face is intentionally clipped flat (no
+// fillet bulge) so it mates flush against the arm root.
+boss_w       = 40; // [30:2:50]   match arm_w
+boss_h       = 60; // [40:5:70]   match arm_root_h
+boss_depth   = 16; // [16:2:28]
+// Explicit chamfered skirt blending the boss into the slab. Height of the
+// chamfer along +Z; lateral expansion at the slab is equal to this. 0 =
+// no skirt (rely only on the minkowski fillet at the boss/slab corner).
+boss_blend_h = 4;  // [0:1:8]
 
 /* [Platform geometry] */
 plat_depth        = 220; // [200:10:300]
 plat_w            = 134; // [130:2:140]
-plat_t            = 8;  // [8:1:14]
+plat_t            = 8;   // [8:1:14]
 plat_boss_w       = 40;  // [50:5:80]
 plat_boss_depth   = 30;  // [25:5:40]
 plat_boss_extra_t = 16;  // [10:2:18]
 lip_h             = 15;  // [12:1:18]
-lip_t             = 6;   // [5:1:8]
+lip_t             = 5;   // [5:1:8]
 
 /* [Joints] */
 tenon_h_plat = 12;
 tenon_w_plat = 25;
 tenon_l_plat = 20;
-tenon_h_base = 20;
-tenon_w_base = 25;
-tenon_l_base = 10;
+tenon_h_base = 25;
+tenon_w_base = 22;
+// Root tenon is fully passthrough — spans the slab plus the frontal boss.
+tenon_l_base = base_t + boss_depth;
 tenon_clearance = 0.1;  // per-side
-insert_spacing  = 8;
+insert_spacing  = 10;
 
 /* [Wall mounting] */
 wall_screw_count   = 2;
@@ -63,6 +78,26 @@ assert(tenon_l_plat + 5 <= plat_boss_depth,
        "platform mortise depth + 5 mm back wall must fit within platform thickness at boss");
 assert(arm_tip_h <= arm_root_h,
        "arm must taper inward (tip height <= root height)");
+// The two lateral clamping screws are stacked vertically (along Y) at the
+// boss's mid-depth, so the vertical (Y) extent of the boss carries the
+// spacing+wall-thickness constraint, while the depth (Z) only needs to be
+// thick enough to clear the screw diameter on either side. Each free face
+// of the boss should retain at least MIN_BOSS_SCREW_WALL mm of plastic
+// around the screw to keep more than one perimeter at 0.4 mm nozzle.
+MIN_BOSS_SCREW_WALL = 3;  // mm
+assert(boss_h >= insert_spacing + SCREW_M5_D + 2*MIN_BOSS_SCREW_WALL,
+       "boss_h too small to safely host two vertically-stacked lateral screws");
+// The lateral screw sits at the midpoint of the boss main body (above
+// the skirt), so the binding constraint is the main-body height, not the
+// total boss depth. Main-body height = boss_depth - boss_blend_h.
+assert(boss_depth - boss_blend_h >= SCREW_M5_D + 2*MIN_BOSS_SCREW_WALL,
+       "boss main body too short to host the lateral screw between skirt top and front face");
+assert(boss_w >= tenon_w_base + 2*MIN_BOSS_SCREW_WALL,
+       "boss_w must be wider than the mortise plus screw-wall margins");
+assert(boss_w <= base_w,
+       "boss must fit within the base footprint laterally");
+assert(boss_h <= base_h - 2*WALL_SCREW_HEAD_D,
+       "boss must not overlap the wall screw counterbores");
 
 // --- Stub modules (filled in by subsequent tasks) ---
 module base_module() {
@@ -76,6 +111,10 @@ module base_module() {
                wall_screw_count = wall_screw_count,
                wall_screw_spacing = wall_screw_spacing,
                insert_spacing = insert_spacing,
+               boss_w = boss_w,
+               boss_h = boss_h,
+               boss_depth = boss_depth,
+               boss_blend_h = boss_blend_h,
                chamfer = chamfer,
                edge_r = edge_r);
 }
@@ -93,6 +132,8 @@ module arm_module() {
         tenon_w_plat = tenon_w_plat,
         tenon_l_plat = tenon_l_plat,
         insert_spacing = insert_spacing,
+        boss_depth = boss_depth,
+        boss_blend_h = boss_blend_h,
         fillet_r = fillet_r,
         edge_r = edge_r);
 }
@@ -125,21 +166,21 @@ module assembly_preview() {
             translate([-base_w/2, -base_h/2, 0])
                 base_module();
 
-    // Arm — origin at base's mortise location
+    // Arm — root face mates against the front face of the base boss.
+    arm_y_offset = base_t + boss_depth;
     color("seagreen", 0.99)
-        translate([0, base_t, 0])
+        translate([0, arm_y_offset, 0])
             arm_module();
 
-    // Platform — translated to the arm tip.
-    // tip_pos is in arm-local frame; arm is placed at [0, base_t, 0] in world,
-    // so add base_t to Y. Inner translate lifts the platform so the mortise
-    // centre (at -plat_t - plat_boss_extra_t/2 in platform Z) lands at
+    // Platform — translated to the arm tip. tip_pos is in arm-local frame;
+    // arm sits at [0, arm_y_offset, 0] in world, so add arm_y_offset to Y.
+    // Inner translate lifts the platform so the mortise centre lands at
     // arm-tip-local Z = 0, aligning it with the tip tenon.
     tip_pos   = arm_centerline_pos(1, arm_length, toe_in_deg, tilt_deg);
     tip_yaw   = arm_yaw(1, toe_in_deg);
     tip_pitch = arm_pitch(1, tilt_deg);
     color("darkorange", 0.99)
-        translate([tip_pos[0], tip_pos[1] + base_t, tip_pos[2]])
+        translate([tip_pos[0], tip_pos[1] + arm_y_offset, tip_pos[2]])
             rotate([0, 0, tip_yaw])
             rotate([tip_pitch, 0, 0])
                 translate([0, 0, plat_t + plat_boss_extra_t/2])
