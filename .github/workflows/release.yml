@@ -46,5 +46,7 @@ jobs:
           files: |
             stl/arm-left.stl
             stl/arm-right.stl
-            stl/base.stl
-            stl/platform.stl
+            stl/base-left.stl
+            stl/base-right.stl
+            stl/platform-left.stl
+            stl/platform-right.stl

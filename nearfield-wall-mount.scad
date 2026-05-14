@@ -8,8 +8,11 @@ include <modules/platform.scad>;
 include <modules/arm.scad>;
 
 /* [Render] */
-// 0 = assembly preview, 1 = base, 2 = arm-right, 3 = arm-left, 4 = platform
-render_piece = 0; // [0:assembly, 1:base, 2:arm-right, 3:arm-left, 4:platform]
+// 0 = assembly preview
+// 1 = base-right          2 = base-left
+// 3 = arm-right           4 = arm-left
+// 5 = platform-right      6 = platform-left
+render_piece = 0; // [0:assembly, 1:base-right, 2:base-left, 3:arm-right, 4:arm-left, 5:platform-right, 6:platform-left]
 
 /* [Acoustic angles] */
 toe_in_deg = 26; // [20:1:30]
@@ -207,7 +210,9 @@ module assembly_preview() {
 // --- Dispatch ---
 if      (render_piece == 0) assembly_preview();
 else if (render_piece == 1) base_module();
-else if (render_piece == 2) arm_module();
-else if (render_piece == 3) mirror([1,0,0]) arm_module();
-else if (render_piece == 4) platform_module();
+else if (render_piece == 2) mirror([1,0,0]) base_module();
+else if (render_piece == 3) arm_module();
+else if (render_piece == 4) mirror([1,0,0]) arm_module();
+else if (render_piece == 5) platform_module();
+else if (render_piece == 6) mirror([1,0,0]) platform_module();
 else assert(false, str("unknown render_piece: ", render_piece));

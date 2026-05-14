@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Generate all STL files for the nearfield wall mount.
-# Output: stl/{base,arm-right,arm-left,platform}.stl
+# Output: stl/{base-right,base-left,arm-right,arm-left,platform-right,platform-left}.stl
 # Optional: also stl/assembly.stl when ASSEMBLY=1.
 
 set -euo pipefail
@@ -11,10 +11,12 @@ OUT_DIR="stl"
 mkdir -p "$OUT_DIR"
 
 declare -A PIECES=(
-    [1]="base"
-    [2]="arm-right"
-    [3]="arm-left"
-    [4]="platform"
+    [1]="base-right"
+    [2]="base-left"
+    [3]="arm-right"
+    [4]="arm-left"
+    [5]="platform-right"
+    [6]="platform-left"
 )
 
 for num in "${!PIECES[@]}"; do
