@@ -31,6 +31,7 @@ jobs:
           for piece in 0 1 2 3 4; do
             xvfb-run -a openscad \
               --render \
+              --imgsize=1200,900 \
               --camera=0,0,0,55,0,25,500 \
               --autocenter \
               --viewall \

@@ -127,10 +127,6 @@ module arm(arm_length, toe_in_deg, tilt_deg,
         difference() {
             rotate([90, 0, 0])  // orient tenon Z-axis to -Y direction
                 tenon(tenon_h_base, tenon_w_base, tenon_l_base, fillet = fillet_r);
-            // Insert holes in the tenon
-            rotate([90, 0, 0])
-                insert_holes(tenon_w_base, tenon_l_base,
-                             spacing = insert_spacing);
         }
 
         // Tip tenon — protrudes from the tip face along the local tangent
