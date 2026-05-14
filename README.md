@@ -15,7 +15,7 @@ I needed to mount a pair of bookshelf speakers above my monitors for nearfield d
 
 The two acoustic angles that matter are **toe-in** (horizontal rotation toward the listening position) and **tilt** (downward angle to aim the tweeter at ear height). Getting these exactly right is a one-time calibration — after that, nothing should ever move.
 
-This bracket encodes both angles structurally. All angular complexity lives in the 3D-curved arm body. The base plate has only perpendicular features. The platform is a flat slab. Both join the arm via perpendicular tenon-mortise interfaces. The joint between pieces is a guided tenon locked with two M5 screws: the tenon handles shear by geometry, the screws only provide clamping force.
+This bracket encodes both angles structurally. All angular complexity lives in the 3D-curved arm body. The base plate has only perpendicular features. The platform is a flat slab. Both join the arm via perpendicular tenon-mortise interfaces. Each joint is a guided tenon locked with two M5 screws: the tenon handles shear by geometry, the screws only provide clamping force. On the base side the mortise passes all the way through a frontal boss whose footprint matches the arm root — the boss localises the clamp material to the joint so the rest of the base can stay thin.
 
 The three-piece split exists because a single-piece bracket for this geometry would not fit on a 225 × 225 mm print bed. The split is also a feature: to try different toe-in or tilt angles you reprint only the arm, and the same base and platform work for both speakers.
 
@@ -29,7 +29,7 @@ The bracket is three separate printed pieces per speaker:
 
 | Piece | Function | Print footprint |
 |---|---|---|
-| Base (P1) | Mounts to wall; perpendicular mortise + 2 wall screw holes | 100 × 180 × 22 mm |
+| Base (P1) | Mounts to wall; thin slab with a frontal boss carrying the passthrough mortise + 2 wall screw holes | 90 × 140 × 30 mm (incl. boss) |
 | Arm (P2) | Structural cantilever encoding both toe-in (26°) and tilt (12°) in its 3D-curved body | ~80 × 60 × 40 mm |
 | Platform (P3) | Supports the speaker; flat slab with rear boss for joint + front lip | 220 × 134 × 22 mm |
 

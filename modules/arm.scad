@@ -108,26 +108,57 @@ module _arm_cross_section(t, arm_length, toe_in_deg, tilt_deg,
 //   The tip tenon protrudes from the tip face (t=1) along the local
 //   tangent direction.
 //   fillet_r = fillet radius passed to tenon() shoulder transition (default 0).
+// boss_depth + boss_blend_h together describe the base's frontal boss
+// along the tenon's long axis: the boss's chamfered skirt occupies the
+// first boss_blend_h of the tenon length (closest to the arm root face),
+// and the rectangular boss main body occupies the remaining
+// boss_depth - boss_blend_h before the slab. The root-tenon inserts are
+// positioned at the midpoint of the boss MAIN BODY (not the midpoint of
+// the full boss depth) so they line up exactly with the lateral
+// clamping screws in the base, which are centered on the same point.
 module arm(arm_length, toe_in_deg, tilt_deg,
            arm_root_h, arm_tip_h, arm_w,
            tenon_h_base, tenon_w_base, tenon_l_base,
            tenon_h_plat, tenon_w_plat, tenon_l_plat,
            insert_spacing,
+           boss_depth, boss_blend_h,
            fillet_r = 0,
            edge_r = 0,
            n_samples = 20) {
+
+    // Tenon-local Z of the boss main body midpoint, measured from the
+    // arm root face (= tenon-local z=0). The root face mates against the
+    // boss front face; the tenon's local +Z axis points away from the
+    // arm along the tenon length (into the boss, then through the slab).
+    // The boss main body starts at tenon-local z = 0 (boss front) and
+    // ends at z = boss_depth - boss_blend_h, so its midpoint is at
+    // (boss_depth - boss_blend_h) / 2.
+    base_insert_z = (boss_depth - boss_blend_h) / 2;
 
     union() {
         // Body
         arm_body(arm_length, toe_in_deg, tilt_deg,
                  arm_root_h, arm_tip_h, arm_w, edge_r, n_samples);
 
-        // Root tenon — protrudes in -Y from origin
-        // Build it pre-positioned so it sticks out the back of the arm
-        difference() {
-            rotate([90, 0, 0])  // orient tenon Z-axis to -Y direction
+        // Root tenon — protrudes in -Y from origin. Two insert holes on
+        // the -X face at tenon-local z = base_insert_z (the boss main
+        // body's mid-depth in assembled coords), spaced along tenon-local
+        // Y by insert_spacing. The outer rotate([90,0,0]) maps tenon-local
+        // +Y to world +Z, so the holes end up stacked vertically on the
+        // tenon's lateral face — paired with the vertically-spaced screw
+        // holes in the base boss.
+        rotate([90, 0, 0])  // orient tenon Z-axis to -Y direction
+            difference() {
                 tenon(tenon_h_base, tenon_w_base, tenon_l_base, fillet = fillet_r);
-        }
+                for (dy = [-insert_spacing/2, insert_spacing/2]) {
+                    translate([-tenon_w_base/2 - PRINT_EPSILON,
+                               dy,
+                               base_insert_z])
+                        rotate([0, 90, 0])
+                            cylinder(d = INSERT_M5_OD,
+                                     h = INSERT_M5_DEPTH + PRINT_EPSILON);
+                }
+            }
 
         // Tip tenon — protrudes from the tip face along the local tangent
         tip_pos   = arm_centerline_pos(1, arm_length, toe_in_deg, tilt_deg);
