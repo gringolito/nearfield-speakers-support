@@ -29,7 +29,7 @@ The bracket is three separate printed pieces per speaker:
 
 | Piece | Function | Print footprint |
 |---|---|---|
-| Base (P1) | Mounts to wall; thin slab with a frontal boss carrying the passthrough mortise + 2 wall screw holes | 90 × 140 × 30 mm (incl. boss) |
+| Base (P1) | Mounts to wall; thin slab with a frontal boss carrying the mortise + 2 wall screw holes. Right/left versions; clamping screws enter the inboard face only. | 90 × 140 × 30 mm (incl. boss) |
 | Arm (P2) | Structural cantilever encoding both toe-in (26°) and tilt (12°) in its 3D-curved body | ~80 × 60 × 40 mm |
 | Platform (P3) | Supports the speaker; flat slab with rear boss for joint + front lip | 220 × 134 × 22 mm |
 
@@ -39,24 +39,26 @@ WALL                                                                  FRONT
  │  ┌──────────┐     ╭──────╮                       ┌───────────────────┬──┐
  │  │   BASE   │◄────┤ ARM  ├──────tangent at 26°───┤    PLATFORM       │ ▲│
  │  │ 100×180  │ M5  │ curve│  curves down 12°      │    220 × 134      │  │
- │  │ univ L/R │     │ L/R  │                       │    universal      │  │
+ │  │   L/R    │     │ L/R  │                       │       L/R         │  │
  │  └──────────┘     ╰──────╯                       └───────────────────┴──┘
  │  vertical pair                                                       lip
  │  of M6 screws
 ```
 
-The full pair (two speakers) uses four STL files:
+The full pair (two speakers) uses six STL files — a right-hand and a left-hand version of each piece, mirrored about the bracket's long axis:
 
 | File | Description |
 |---|---|
-| `base.stl` | Wall base plate — identical for both sides |
+| `base-right.stl` | Right-hand wall base plate (counterbore on the inboard face) |
+| `base-left.stl` | Left-hand wall base plate (mirrored) |
 | `arm-right.stl` | Right-hand arm (toe-in curves toward listener) |
 | `arm-left.stl` | Left-hand arm (mirrored) |
-| `platform.stl` | Platform — identical for both sides |
+| `platform-right.stl` | Right-hand platform (counterbore on the inboard face) |
+| `platform-left.stl` | Left-hand platform (mirrored) |
 
-| Base | Arm Right | Arm Left | Platform |
-|---|---|---|---|
-| ![Base](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/base.png) | ![Arm Right](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/arm-right.png) | ![Arm Left](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/arm-left.png) | ![Platform](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/platform.png) |
+| Base Right | Base Left | Arm Right | Arm Left | Platform Right | Platform Left |
+|---|---|---|---|---|---|
+| ![Base Right](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/base-right.png) | ![Base Left](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/base-left.png) | ![Arm Right](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/arm-right.png) | ![Arm Left](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/arm-left.png) | ![Platform Right](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/platform-right.png) | ![Platform Left](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/platform-left.png) |
 
 ---
 
@@ -64,7 +66,7 @@ The full pair (two speakers) uses four STL files:
 
 ### Option A — Print the ready-to-use STLs
 
-Download the four STL files from the [latest release](https://github.com/gringolito/nearfield-speakers-support/releases/latest). No OpenSCAD required.
+Download the six STL files from the [latest release](https://github.com/gringolito/nearfield-speakers-support/releases/latest). No OpenSCAD required.
 
 Default geometry:
 
@@ -168,10 +170,12 @@ The default 0.1 mm per side works for most printers. If the tenon is too tight, 
 Or generate a single piece:
 
 ```bash
-openscad -o stl/base.stl       -D render_piece=1 nearfield-wall-mount.scad
-openscad -o stl/arm-right.stl  -D render_piece=2 nearfield-wall-mount.scad
-openscad -o stl/arm-left.stl   -D render_piece=3 nearfield-wall-mount.scad
-openscad -o stl/platform.stl   -D render_piece=4 nearfield-wall-mount.scad
+openscad -o stl/base-right.stl     -D render_piece=1 nearfield-wall-mount.scad
+openscad -o stl/base-left.stl      -D render_piece=2 nearfield-wall-mount.scad
+openscad -o stl/arm-right.stl      -D render_piece=3 nearfield-wall-mount.scad
+openscad -o stl/arm-left.stl       -D render_piece=4 nearfield-wall-mount.scad
+openscad -o stl/platform-right.stl -D render_piece=5 nearfield-wall-mount.scad
+openscad -o stl/platform-left.stl  -D render_piece=6 nearfield-wall-mount.scad
 ```
 
 ---
@@ -241,7 +245,7 @@ Some directions worth exploring:
 
 ## Contributing
 
-Issues and pull requests are welcome. The CI pipeline builds all four STL files and validates their geometry against print-bed dimensions on every push and pull request. Renders of all pieces are posted automatically as a comment on each PR — you can see exactly what changed without printing anything.
+Issues and pull requests are welcome. The CI pipeline builds all six STL files and validates their geometry against print-bed dimensions on every push and pull request. Renders of all pieces are posted automatically as a comment on each PR — you can see exactly what changed without printing anything.
 
 ---
 
