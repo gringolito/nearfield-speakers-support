@@ -94,7 +94,6 @@ assert(arm_tip_h <= arm_root_h,
 // thick enough to clear the screw diameter on either side. Each free face
 // of the boss should retain at least MIN_BOSS_SCREW_WALL mm of plastic
 // around the screw to keep more than one perimeter at 0.4 mm nozzle.
-MIN_BOSS_SCREW_WALL = 3;  // mm
 assert(boss_h >= insert_spacing + SCREW_M5_D + 2*MIN_BOSS_SCREW_WALL,
        "boss_h too small to safely host two vertically-stacked lateral screws");
 // The lateral screw sits at the midpoint of the boss main body (above
