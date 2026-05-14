@@ -23,7 +23,8 @@ module platform_body(plat_depth, plat_w, plat_t,
                      lip_h, lip_t,
                      tenon_h_plat, tenon_w_plat, tenon_l_plat,
                      tenon_clearance, insert_spacing,
-                     fillet_r = 0) {
+                     chamfer = 0,
+                     edge_r = 0) {
     // Origin: platform top face center at z = 0.
     //   +X = lateral right, +Y = forward (toward lip), +Z = up
     //   Back of platform at y = 0, front at y = plat_depth.
@@ -34,15 +35,15 @@ module platform_body(plat_depth, plat_w, plat_t,
         union() {
             // Main slab — origin at top face center
             translate([-plat_w/2, 0, -plat_t])
-                cube([plat_w, plat_depth, plat_t]);
+                rounded_cube(plat_w, plat_depth, plat_t, edge_r);
 
             // Boss — extends below the slab at the back, centered in X
             translate([-plat_boss_w/2, 0, -plat_t - plat_boss_extra_t])
-                cube([plat_boss_w, plat_boss_depth, plat_boss_extra_t]);
+                rounded_cube(plat_boss_w, plat_boss_depth, plat_boss_extra_t, edge_r);
 
             // Lip — sits on top of the platform at the front edge
             translate([-plat_w/2, plat_depth - lip_t, 0])
-                cube([plat_w, lip_t, lip_h]);
+                rounded_cube(plat_w, lip_t, lip_h, edge_r);
         }
 
         // Mortise pocket on the back face (y = 0), extending in +Y into the boss.
@@ -52,7 +53,7 @@ module platform_body(plat_depth, plat_w, plat_t,
             rotate([-90, 0, 0])  // map mortise long axis (+Z) to +Y (into boss)
                 mortise_cutout(tenon_h_plat, tenon_w_plat,
                                tenon_l_plat, clearance = tenon_clearance,
-                               chamfer = fillet_r);
+                               chamfer = chamfer);
 
         // 2 lateral clamping screw holes piercing through the boss,
         // aligned with the inserts in the inserted tenon (insert centers
