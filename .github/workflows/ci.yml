@@ -32,7 +32,7 @@ jobs:
             xvfb-run -a openscad \
               --render \
               --imgsize=1200,900 \
-              --camera=0,0,0,55,0,25,500 \
+              --camera=0,0,0,55,0,115,500 \
               --autocenter \
               --viewall \
               --colorscheme=BeforeDawn \
