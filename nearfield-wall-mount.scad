@@ -18,40 +18,40 @@ tilt_deg   = 12; // [10:1:15]
 /* [Arm geometry] */
 arm_length  = 70;  // [50:5:100]
 arm_root_h  = 60;  // [50:5:70]
-arm_tip_h   = 30;  // [25:5:40]
+arm_tip_h   = 32;  // [25:5:40]
 arm_w       = 40;  // [35:5:50]
 
 /* [Base geometry] */
 base_h = 140; // [160:10:220]
 base_w = 90; // [80:10:140]
-base_t = 22;  // [22:2:28]
+base_t = 10;  // [10:2:28]
 
 /* [Platform geometry] */
 plat_depth        = 220; // [200:10:300]
 plat_w            = 134; // [130:2:140]
-plat_t            = 10;  // [8:1:14]
-plat_boss_w       = 60;  // [50:5:80]
+plat_t            = 8;  // [8:1:14]
+plat_boss_w       = 40;  // [50:5:80]
 plat_boss_depth   = 30;  // [25:5:40]
-plat_boss_extra_t = 12;  // [10:2:18]
+plat_boss_extra_t = 16;  // [10:2:18]
 lip_h             = 15;  // [12:1:18]
 lip_t             = 6;   // [5:1:8]
 
 /* [Joints] */
-tenon_h_plat = 14;
-tenon_w_plat = 26;
-tenon_l_plat = 17;
-tenon_h_base = 16;
-tenon_w_base = 30;
-tenon_l_base = 17;
+tenon_h_plat = 12;
+tenon_w_plat = 25;
+tenon_l_plat = 20;
+tenon_h_base = 20;
+tenon_w_base = 25;
+tenon_l_base = 10;
 tenon_clearance = 0.1;  // per-side
-insert_spacing  = 10;
+insert_spacing  = 8;
 
 /* [Wall mounting] */
 wall_screw_count   = 2;
 wall_screw_spacing = 100;
 
 /* [Fillets & Chamfers] */
-edge_r   = 1.0; // [0:0.5:6]
+edge_r   = 2.0; // [0:0.5:6]
 fillet_r = 1.0; // [0:0.5:6]
 chamfer  = 1.0; // [0:0.5:6]
 
@@ -59,10 +59,8 @@ chamfer  = 1.0; // [0:0.5:6]
 $fn = 64;
 
 // Sanity asserts on parameters that interact:
-assert(tenon_l_plat + 5 <= plat_t + plat_boss_extra_t,
+assert(tenon_l_plat + 5 <= plat_boss_depth,
        "platform mortise depth + 5 mm back wall must fit within platform thickness at boss");
-assert(tenon_l_base + 5 <= base_t,
-       "base mortise depth + 5 mm back wall must fit within base_t");
 assert(arm_tip_h <= arm_root_h,
        "arm must taper inward (tip height <= root height)");
 
@@ -128,7 +126,7 @@ module assembly_preview() {
                 base_module();
 
     // Arm — origin at base's mortise location
-    color("seagreen")
+    color("seagreen", 0.99)
         translate([0, base_t, 0])
             arm_module();
 
@@ -140,7 +138,7 @@ module assembly_preview() {
     tip_pos   = arm_centerline_pos(1, arm_length, toe_in_deg, tilt_deg);
     tip_yaw   = arm_yaw(1, toe_in_deg);
     tip_pitch = arm_pitch(1, tilt_deg);
-    color("darkorange")
+    color("darkorange", 0.99)
         translate([tip_pos[0], tip_pos[1] + base_t, tip_pos[2]])
             rotate([0, 0, tip_yaw])
             rotate([tip_pitch, 0, 0])

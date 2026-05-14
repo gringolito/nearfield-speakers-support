@@ -44,13 +44,5 @@ module base_plate(base_h, base_w, base_t,
                 cylinder(d = WALL_SCREW_HEAD_D,
                          h = WALL_SCREW_HEAD_H + PRINT_EPSILON);
         }
-
-        // 2 lateral clamping screw holes piercing through to the mortise
-        // Origin of clamping_screw_hole assumes mortise center.
-        translate([base_w/2, mortise_center_y, mortise_z_back])
-            clamping_screw_hole(piece_thru = base_w,
-                                tenon_z_pos = 0,
-                                tenon_l = tenon_l_base,
-                                spacing = insert_spacing);
-    }
+   }
 }
