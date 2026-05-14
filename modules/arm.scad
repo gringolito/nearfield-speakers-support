@@ -41,15 +41,35 @@ function arm_pitch(t, tilt_deg) = -tilt_deg * t;
 // Builds the arm body (no tenons) as a series of hulled segments
 // connecting cross-sections sampled along the centerline.
 module arm_body(arm_length, toe_in_deg, tilt_deg,
-                arm_root_h, arm_tip_h, arm_w, n_samples = 20) {
+                arm_root_h, arm_tip_h, arm_w, edge_r = 0, n_samples = 20) {
     for (i = [0 : n_samples - 1]) {
         t1 = i       / n_samples;
         t2 = (i + 1) / n_samples;
         hull() {
             _arm_cross_section(t1, arm_length, toe_in_deg, tilt_deg,
-                               arm_root_h, arm_tip_h, arm_w);
+                               arm_root_h, arm_tip_h, arm_w, edge_r);
             _arm_cross_section(t2, arm_length, toe_in_deg, tilt_deg,
-                               arm_root_h, arm_tip_h, arm_w);
+                               arm_root_h, arm_tip_h, arm_w, edge_r);
+        }
+    }
+}
+
+// _arm_wafer(w, h, r): thin slab in the XY plane, centered at origin,
+//   with corners rounded to radius r. Replaces the linear_extrude+square
+//   wafer used by _arm_cross_section(). r=0 falls back to the original
+//   rectangular wafer. Width along X, height along Y, 0.1 mm thin in Z.
+module _arm_wafer(w, h, r) {
+    r_ = min(r, w/2, h/2);
+    fn_r = max(8, round($fn / 4));
+    if (r_ <= 0) {
+        linear_extrude(0.1, center = true)
+            square([w, h], center = true);
+    } else {
+        hull() {
+            for (xi = [-(w/2 - r_), (w/2 - r_)])
+                for (yi = [-(h/2 - r_), (h/2 - r_)])
+                    translate([xi, yi, 0])
+                        cylinder(r = r_, h = 0.1, center = true, $fn = fn_r);
         }
     }
 }
@@ -58,7 +78,7 @@ module arm_body(arm_length, toe_in_deg, tilt_deg,
 // and orientation for parameter t.
 //
 // IMPORTANT — orientation sequence (innermost-out, in execution order):
-//   1. `square([arm_w, h])` + `linear_extrude(0.1)` → wafer in XY plane,
+//   1. `_arm_wafer(arm_w, h, edge_r)` → wafer in XY plane,
 //      X = lateral, Y = height, Z = thin.
 //   2. `rotate([90, 0, 0])` → rotates the wafer into the XZ plane,
 //      X = lateral, Z = height, Y = thin (this is the orientation
@@ -70,7 +90,7 @@ module arm_body(arm_length, toe_in_deg, tilt_deg,
 //      toward +X (matching the centerline curve).
 //   5. `translate(pos)` → places the wafer at the centerline point.
 module _arm_cross_section(t, arm_length, toe_in_deg, tilt_deg,
-                          arm_root_h, arm_tip_h, arm_w) {
+                          arm_root_h, arm_tip_h, arm_w, edge_r = 0) {
     pos = arm_centerline_pos(t, arm_length, toe_in_deg, tilt_deg);
     yaw = arm_yaw(t, toe_in_deg);
     pitch = arm_pitch(t, tilt_deg);
@@ -80,8 +100,7 @@ module _arm_cross_section(t, arm_length, toe_in_deg, tilt_deg,
         rotate([0, 0, yaw])         // yaw about Z (yaw is already negated)
         rotate([pitch, 0, 0])       // pitch about X
             rotate([90, 0, 0])      // orient wafer in XZ plane (X=arm_w, Z=h, thin in Y)
-                linear_extrude(0.1, center = true)
-                    square([arm_w, h], center = true);
+                _arm_wafer(arm_w, h, edge_r);
 }
 
 // arm(): full arm with root tenon and tip tenon.
@@ -95,12 +114,13 @@ module arm(arm_length, toe_in_deg, tilt_deg,
            tenon_h_plat, tenon_w_plat, tenon_l_plat,
            insert_spacing,
            fillet_r = 0,
+           edge_r = 0,
            n_samples = 20) {
 
     union() {
         // Body
         arm_body(arm_length, toe_in_deg, tilt_deg,
-                 arm_root_h, arm_tip_h, arm_w, n_samples);
+                 arm_root_h, arm_tip_h, arm_w, edge_r, n_samples);
 
         // Root tenon — protrudes in -Y from origin
         // Build it pre-positioned so it sticks out the back of the arm
