@@ -31,19 +31,39 @@ module platform_body(plat_depth, plat_w, plat_t,
     //   Lip is at y = plat_depth, extending +Z direction (above the platform).
     //   Boss extends -Z (below the platform) at the back.
 
+    // Each piece's external faces are pre-inset by edge_r so that after
+    // fillet_solid()'s minkowski expansion, the final outer dimensions
+    // match the requested parameters. The slab and boss extend in -Y to
+    // y=0 pre-fillet (no -Y inset); an intersection at y >= 0 then clips
+    // off the back-side fillet bulge, leaving the back face perfectly flat
+    // with sharp edges to mate flush with the arm tip. All other faces
+    // keep their fillets. r=0 collapses to the original geometry.
+    r = edge_r;
+    assert(plat_t   - 2*r > 0, "edge_r too large: plat_t - 2*edge_r must be > 0");
+    assert(lip_t    - 2*r > 0, "edge_r too large: lip_t - 2*edge_r must be > 0");
+    assert(plat_w   - 2*r > 0, "edge_r too large: plat_w - 2*edge_r must be > 0");
+    assert(plat_boss_w     - 2*r > 0, "edge_r too large: plat_boss_w - 2*edge_r must be > 0");
+    assert(plat_boss_depth - r   > 0, "edge_r too large: plat_boss_depth - edge_r must be > 0");
+
     difference() {
-        fillet_solid(edge_r) union() {
-            // Main slab — origin at top face center
-            translate([-plat_w/2, 0, -plat_t])
-                cube([plat_w, plat_depth, plat_t]);
+        intersection() {
+            fillet_solid(r) union() {
+                // Main slab — back face at y=0 (clipped flat by the
+                // intersection below). Top/bottom inset by r.
+                translate([-plat_w/2 + r, 0, -plat_t + r])
+                    cube([plat_w - 2*r, plat_depth - r, plat_t - 2*r]);
 
-            // Boss — extends below the slab at the back, centered in X
-            translate([-plat_boss_w/2, 0, -plat_t - plat_boss_extra_t])
-                cube([plat_boss_w, plat_boss_depth, plat_boss_extra_t]);
+                // Boss — back face at y=0 (clipped flat). Top joins slab.
+                translate([-plat_boss_w/2 + r, 0, -plat_t - plat_boss_extra_t + r])
+                    cube([plat_boss_w - 2*r, plat_boss_depth - r, plat_boss_extra_t]);
 
-            // Lip — sits on top of the platform at the front edge
-            translate([-plat_w/2, plat_depth - lip_t, 0])
-                cube([plat_w, lip_t, lip_h]);
+                // Lip — front strip above slab. Back is internal to slab.
+                translate([-plat_w/2 + r, plat_depth - lip_t + r, -r])
+                    cube([plat_w - 2*r, lip_t - 2*r, lip_h]);
+            }
+            // Clip at y >= 0 to flatten the back face with sharp edges.
+            translate([-(plat_w + 2*r), 0, -(plat_t + plat_boss_extra_t + 2*r)])
+                cube([2*(plat_w + 2*r), plat_depth + 2*r, plat_t + plat_boss_extra_t + lip_h + 4*r]);
         }
 
         // Mortise pocket on the back face (y = 0), extending in +Y into the boss.
