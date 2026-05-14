@@ -16,14 +16,14 @@ toe_in_deg = 26; // [20:1:30]
 tilt_deg   = 12; // [10:1:15]
 
 /* [Arm geometry] */
-arm_length  = 80;  // [50:5:100]
+arm_length  = 70;  // [50:5:100]
 arm_root_h  = 60;  // [50:5:70]
 arm_tip_h   = 30;  // [25:5:40]
 arm_w       = 40;  // [35:5:50]
 
 /* [Base geometry] */
-base_h = 180; // [160:10:220]
-base_w = 100; // [80:10:140]
+base_h = 140; // [160:10:220]
+base_w = 90; // [80:10:140]
 base_t = 22;  // [22:2:28]
 
 /* [Platform geometry] */
@@ -48,10 +48,10 @@ insert_spacing  = 10;
 
 /* [Wall mounting] */
 wall_screw_count   = 2;
-wall_screw_spacing = 120;
+wall_screw_spacing = 100;
 
 /* [Fillets] */
-fillet_r = 3; // [1:1:6]
+fillet_r = 0; // [1:1:6]
 
 /* [Quality] */
 $fn = 64;
@@ -118,8 +118,8 @@ module assembly_preview() {
 
     // Base — rotated so its front face is along +Y (matching arm root direction)
     color("steelblue")
-        rotate([90, 0, 0])
-            translate([-base_w/2, -base_h/2, -base_t])
+        rotate([270, 0, 0])
+            translate([-base_w/2, -base_h/2, 0])
                 base_module();
 
     // Arm — origin at base's mortise location
@@ -127,15 +127,19 @@ module assembly_preview() {
         translate([0, base_t, 0])
             arm_module();
 
-    // Platform — translated to the arm tip
+    // Platform — translated to the arm tip.
+    // tip_pos is in arm-local frame; arm is placed at [0, base_t, 0] in world,
+    // so add base_t to Y. Inner translate lifts the platform so the mortise
+    // centre (at -plat_t - plat_boss_extra_t/2 in platform Z) lands at
+    // arm-tip-local Z = 0, aligning it with the tip tenon.
     tip_pos   = arm_centerline_pos(1, arm_length, toe_in_deg, tilt_deg);
     tip_yaw   = arm_yaw(1, toe_in_deg);
     tip_pitch = arm_pitch(1, tilt_deg);
     color("darkorange")
-        translate([tip_pos[0], base_t + tip_pos[1], tip_pos[2]])
+        translate([tip_pos[0], tip_pos[1] + base_t, tip_pos[2]])
             rotate([0, 0, tip_yaw])
             rotate([tip_pitch, 0, 0])
-                translate([0, tenon_l_plat, 0])
+                translate([0, 0, plat_t + plat_boss_extra_t/2])
                     platform_module();
 }
 
