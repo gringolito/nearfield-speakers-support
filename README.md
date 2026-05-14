@@ -54,9 +54,9 @@ The full pair (two speakers) uses four STL files:
 | `arm-left.stl` | Left-hand arm (mirrored) |
 | `platform.stl` | Platform — identical for both sides |
 
-| Base | Arm | Platform |
-|---|---|---|
-| ![Piece 1](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/piece1.png) | ![Piece 2](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/piece2.png) | ![Piece 3](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/piece3.png) |
+| Base | Arm Right | Arm Left | Platform |
+|---|---|---|---|
+| ![Base](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/base.png) | ![Arm Right](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/arm-right.png) | ![Arm Left](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/arm-left.png) | ![Platform](https://raw.githubusercontent.com/gringolito/nearfield-speakers-support/ci-renders/latest/platform.png) |
 
 ---
 
@@ -86,7 +86,7 @@ Requires [OpenSCAD](https://openscad.org/).
 ```bash
 git clone https://github.com/gringolito/nearfield-speakers-support.git
 cd nearfield-speakers-support
-./export.sh
+./scripts/export.sh
 ```
 
 STL files are written to `stl/`.
@@ -162,21 +162,16 @@ The default 0.1 mm per side works for most printers. If the tenon is too tight, 
 ### Generating STLs after changes
 
 ```bash
-./export.sh
+./scripts/export.sh
 ```
 
 Or generate a single piece:
 
 ```bash
-# Base — same for both sides
-openscad -o stl/base.stl -D 'render_piece="base"' nearfield-wall-mount.scad
-
-# Arm — right and left
-openscad -o stl/arm-right.stl -D 'render_piece="arm"' -D 'side="right"' nearfield-wall-mount.scad
-openscad -o stl/arm-left.stl  -D 'render_piece="arm"' -D 'side="left"'  nearfield-wall-mount.scad
-
-# Platform — same for both sides
-openscad -o stl/platform.stl -D 'render_piece="platform"' nearfield-wall-mount.scad
+openscad -o stl/base.stl       -D render_piece=1 nearfield-wall-mount.scad
+openscad -o stl/arm-right.stl  -D render_piece=2 nearfield-wall-mount.scad
+openscad -o stl/arm-left.stl   -D render_piece=3 nearfield-wall-mount.scad
+openscad -o stl/platform.stl   -D render_piece=4 nearfield-wall-mount.scad
 ```
 
 ---
@@ -190,6 +185,8 @@ openscad -o stl/platform.stl -D 'render_piece="platform"' nearfield-wall-mount.s
 | **PETG** | Best balance of strength, thermal stability, and printability. Handles the sustained load and minor heat without creep. |
 | **ABS / ASA** | Better long-term structural stability and heat resistance. ASA adds UV resistance — worth it if the brackets are near a window. |
 | **PLA+** | Can deform under sustained load above ~40°C, and may lose rigidity over time near heat sources. Acceptable for cool, stable environments. |
+
+The mechanical safety factor (~5×) in the design was calculated against PLA+ as a worst-case minimum-acceptable material. PETG, ABS, and ASA have superior creep resistance and are preferred when available.
 
 ### Slicer settings
 

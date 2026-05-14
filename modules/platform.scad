@@ -8,7 +8,8 @@ include <joinery.scad>;
 //   Z = 0 is the speaker resting surface (in real life, this is the platform top;
 //        in print orientation, it's against the bed).
 //   Z = plat_t is the underside of the platform body.
-//   Boss extends from Z = plat_t to Z = plat_t + plat_boss_extra_t at the back.
+//   Boss extends from Z = -plat_t - plat_boss_extra_t to Z = -plat_t at the back
+//   (below the speaker surface).
 //   The mortise opens on the back face (y = 0) and extends in +Y into the boss.
 //   Lip extends in +Z direction (above the platform top, toward the speaker baffle).
 //
