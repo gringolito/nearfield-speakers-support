@@ -1,21 +1,46 @@
-include <../nearfield-wall-mount.scad>
+// tests/fit_test.scad
+// Prints a single tenon and a matching mortise block side-by-side.
+// Use this to calibrate tenon_clearance for your printer:
+//   - Print, then try to slide the tenon into the mortise
+//   - Too tight: increase tenon_clearance in the main spec
+//   - Too loose: decrease tenon_clearance
+//   - Goal: firm slide-fit, no rocking
 
-gap = 2;
+include <../modules/common.scad>;
+include <../modules/joinery.scad>;
 
-// Arm tenon (from piece2 wall-side end) — solid cube
-color("Coral")
-translate([-tenon_w/2, -tenon_h/2, 0])
-    cube([tenon_w, tenon_h, tenon_l]);
+$fn = 64;
 
-// Mortise cavity (from piece1 boss) — shown as solid for size comparison
-color("SteelBlue", 0.5)
-translate([-(tenon_w + 2*tenon_clearance)/2, -(tenon_h + 2*tenon_clearance)/2, tenon_l + gap])
-    cube([
-        tenon_w + 2 * tenon_clearance,
-        tenon_h + 2 * tenon_clearance,
-        tenon_l
-    ]);
+// Match the platform tenon dimensions from the spec
+tenon_h = 14;
+tenon_w = 26;
+tenon_l = 17;
+tenon_clearance = 0.1;
 
-echo("Tenon:", tenon_w, "x", tenon_h, "x", tenon_l, "mm");
-echo("Mortise:", tenon_w + 2*tenon_clearance, "x", tenon_h + 2*tenon_clearance, "mm");
-echo("Per-side clearance:", tenon_clearance, "mm");
+// Layout: tenon on the left, mortise block on the right, separated by 20 mm
+GAP = 20;
+
+// Print the tenon attached to a small base for stability
+module test_tenon() {
+    BASE_T = 4;
+    union() {
+        translate([-tenon_w/2 - 5, -tenon_h/2 - 5, 0])
+            cube([tenon_w + 10, tenon_h + 10, BASE_T]);
+        translate([0, 0, BASE_T])
+            tenon(tenon_h, tenon_w, tenon_l);
+    }
+}
+
+// Mortise block — same outer footprint, mortise cut into it
+module test_mortise() {
+    BLOCK_T = tenon_l + 5;   // 5 mm back wall
+    difference() {
+        translate([-tenon_w/2 - 5, -tenon_h/2 - 5, 0])
+            cube([tenon_w + 10, tenon_h + 10, BLOCK_T]);
+        translate([0, 0, BLOCK_T - tenon_l - PRINT_EPSILON])
+            mortise_cutout(tenon_h, tenon_w, tenon_l, clearance = tenon_clearance);
+    }
+}
+
+test_tenon();
+translate([tenon_w + 10 + GAP, 0, 0]) test_mortise();

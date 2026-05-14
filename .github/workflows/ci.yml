@@ -22,19 +22,19 @@ jobs:
           sudo apt-get install -y openscad xvfb
 
       - name: Build STLs
-        run: ./export.sh
+        run: ./scripts/export.sh
 
       - name: Render PNGs
         run: |
           mkdir -p renders
-          declare -A NAMES=([0]=assembly [1]=piece1 [2]=piece2 [3]=piece3)
-          for piece in 0 1 2 3; do
+          declare -A NAMES=([0]=assembly [1]=base [2]=arm-right [3]=arm-left [4]=platform)
+          for piece in 0 1 2 3 4; do
             xvfb-run -a openscad \
               --render \
               --camera=0,0,0,55,0,25,500 \
               --autocenter \
               --viewall \
-              --colorscheme=Starnight \
+              --colorscheme=BeforeDawn \
               -o "renders/${NAMES[$piece]}.png" \
               nearfield-wall-mount.scad \
               -D "render_piece=${piece}"
@@ -110,9 +110,9 @@ jobs:
               marker,
               '## OpenSCAD Renders',
               '',
-              '| Assembly | Piece 1 | Piece 2 | Piece 3 |',
-              '| --- | --- | --- | --- |',
-              `| ![assembly](${base}/assembly.png) | ![piece1](${base}/piece1.png) | ![piece2](${base}/piece2.png) | ![piece3](${base}/piece3.png) |`,
+              '| Assembly | Base | Arm Right | Arm Left | Platform |',
+              '| --- | --- | --- | --- | --- |',
+              `| ![assembly](${base}/assembly.png) | ![base](${base}/base.png) | ![arm-right](${base}/arm-right.png) | ![arm-left](${base}/arm-left.png) | ![platform](${base}/platform.png) |`,
             ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
@@ -138,7 +138,9 @@ jobs:
           path: stl/
 
       - name: Install admesh
-        run: sudo apt-get install -y admesh
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y admesh
 
       - name: Validate STLs
         id: validate
@@ -152,10 +154,10 @@ jobs:
             ROWS="${ROWS}${ROW}"$'\n'
           }
 
-          check stl/piece1-left.stl     225 225 265
-          check stl/piece1-right.stl    225 225 265
-          check stl/piece2-arm.stl      225 225 265
-          check stl/piece3-platform.stl 225 225 265
+          check stl/base.stl       225 225 265
+          check stl/arm-right.stl  225 225 265
+          check stl/arm-left.stl   225 225 265
+          check stl/platform.stl   225 225 265
 
           {
             echo "| File | Manifold | Dimensions | Triangles | Result |"
