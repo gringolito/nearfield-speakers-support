@@ -90,11 +90,13 @@ module platform_body(plat_depth, plat_w, plat_t,
         // 2 lateral clamping screw holes piercing through the boss,
         // aligned with the inserts in the inserted tenon (insert centers
         // at y = tenon_l_plat/2 ± insert_spacing/2).
+        // Map clamping_screw_hole's local +Z (spacing axis) onto world +Y
+        // (vertical, when wall-mounted). spacing_center_z = 0 puts both
+        // screws at world Y = tenon_l_plat/2 ± spacing/2 — the same
+        // positions as the old tenon_z_pos = -tenon_l_plat/2 call.
         translate([0, tenon_l_plat/2, mortise_z_center])
             rotate([-90, 0, 0])
                 clamping_screw_hole(piece_thru = plat_boss_w,
-                                    tenon_z_pos = -tenon_l_plat/2,
-                                    tenon_l = tenon_l_plat,
-                                    spacing = insert_spacing);
+                                    spacing    = insert_spacing);
     }
 }
