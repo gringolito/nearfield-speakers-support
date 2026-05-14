@@ -5,25 +5,66 @@
 
 include <common.scad>;
 
-// tenon(h, w, l): rectangular prism centered on the XY origin,
+// tenon(h, w, l, fillet): rectangular prism centered on the XY origin,
 //   extending in +Z direction for length l.
 //   h = vertical (Z-aligned cross-section dim along the global Z when
 //       the joint is in its assembled orientation)
 //   w = lateral (X-aligned cross-section)
 //   l = length along Z (the tenon protrudes upward from origin)
-module tenon(h, w, l) {
+//   fillet = optional shoulder fillet radius at the tenon root (default 0).
+//     When > 0, a tapered shoulder transitions from an oversized cross-section
+//     at z=0 (w+2*fillet × h+2*fillet) up to the nominal cross-section at
+//     z=fillet, reducing stress concentration at the tenon root.
+module tenon(h, w, l, fillet = 0) {
     // The tenon's cross-section is centered at the origin.
     // Protrudes in +Z.
-    translate([-w/2, -h/2, 0])
-        cube([w, h, l]);
+    f = min(fillet, l / 2);  // safety: never let the fillet exceed half the tenon length
+    if (f <= 0) {
+        // Original behavior — no fillet
+        translate([-w/2, -h/2, 0])
+            cube([w, h, l]);
+    } else {
+        union() {
+            // Main tenon body from z=f to z=l (rectangular)
+            translate([-w/2, -h/2, f])
+                cube([w, h, l - f]);
+            // Shoulder: hull between the oversized base and the nominal cross-section.
+            // Creates a smooth tapered transition from the body face up to the tenon dims.
+            hull() {
+                translate([-(w/2 + f), -(h/2 + f), 0])
+                    cube([w + 2*f, h + 2*f, PRINT_EPSILON]);
+                translate([-w/2, -h/2, f - PRINT_EPSILON])
+                    cube([w, h, PRINT_EPSILON]);
+            }
+        }
+    }
 }
 
-// mortise_cutout(h, w, l, clearance): rectangular pocket sized to receive
+// mortise_cutout(h, w, l, clearance, chamfer): rectangular pocket sized to receive
 //   a matching tenon, with per-side clearance. Pocket extends in +Z from origin.
 //   Add PRINT_EPSILON to the depth so subtractions cleanly cut through faces.
-module mortise_cutout(h, w, l, clearance = 0.1) {
-    translate([-(w/2 + clearance), -(h/2 + clearance), -PRINT_EPSILON])
-        cube([w + 2*clearance, h + 2*clearance, l + clearance + PRINT_EPSILON]);
+//   chamfer = optional chamfer at the mortise mouth (z=0 face, default 0).
+//     When > 0, the opening on the outside face is widened by chamfer mm on each
+//     side, easing tenon entry and reducing stress raisers in the receiving piece.
+module mortise_cutout(h, w, l, clearance = 0.1, chamfer = 0) {
+    c = min(chamfer, l / 2);  // safety: never let the chamfer exceed half the mortise depth
+    union() {
+        // Main mortise pocket (same as before)
+        translate([-(w/2 + clearance), -(h/2 + clearance), -PRINT_EPSILON])
+            cube([w + 2*clearance, h + 2*clearance, l + clearance + PRINT_EPSILON]);
+        // Chamfer at the mouth (z = 0 face): widens from nominal at z=0 down to
+        // oversized at z=-(c + PRINT_EPSILON). Extends in -Z (outside the piece).
+        if (c > 0) {
+            hull() {
+                // Oversized opening at z=-c (outside the piece)
+                translate([-(w/2 + clearance + c), -(h/2 + clearance + c), -c - PRINT_EPSILON])
+                    cube([w + 2*clearance + 2*c, h + 2*clearance + 2*c, PRINT_EPSILON]);
+                // Nominal opening at z=0 (transition point)
+                translate([-(w/2 + clearance), -(h/2 + clearance), -PRINT_EPSILON])
+                    cube([w + 2*clearance, h + 2*clearance, PRINT_EPSILON]);
+            }
+        }
+    }
 }
 
 // insert_holes(tenon_w, tenon_l, spacing, depth, od):

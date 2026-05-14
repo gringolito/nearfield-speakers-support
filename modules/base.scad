@@ -12,7 +12,8 @@ module base_plate(base_h, base_w, base_t,
                   tenon_h_base, tenon_w_base, tenon_l_base,
                   tenon_clearance,
                   wall_screw_count, wall_screw_spacing,
-                  insert_spacing) {
+                  insert_spacing,
+                  fillet_r = 0) {
 
     // The mortise is in the center of the front face at mid-height.
     mortise_center_y = base_h / 2;
@@ -26,7 +27,8 @@ module base_plate(base_h, base_w, base_t,
         // Mortise pocket on front face
         translate([base_w/2, mortise_center_y, mortise_z_back])
             mortise_cutout(tenon_h_base, tenon_w_base,
-                           tenon_l_base, clearance = tenon_clearance);
+                           tenon_l_base, clearance = tenon_clearance,
+                           chamfer = fillet_r);
 
         // 2 wall screw holes (countersunk on the front face)
         wall_screw_y_centers = [

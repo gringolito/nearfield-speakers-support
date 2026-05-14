@@ -150,9 +150,9 @@ All parameters exposed in OpenSCAD Customizer.
 
 ### Geometry — fillets
 
-| Parameter | Default | Range | Purpose |
-|---|---|---|---|
-| `fillet_r` | 6 mm | 4–10 | Default fillet radius at structural transitions |
+| Parameter  | Default | Range | Purpose                                       |
+|------------|---------|-------|-----------------------------------------------|
+| `fillet_r` | 3 mm    | 1–6   | Fillet radius at tenon roots / mortise mouths |
 
 ### Joints
 

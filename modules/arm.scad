@@ -88,11 +88,13 @@ module _arm_cross_section(t, arm_length, toe_in_deg, tilt_deg,
 //   The root tenon protrudes in -Y direction from the root face (t=0).
 //   The tip tenon protrudes from the tip face (t=1) along the local
 //   tangent direction.
+//   fillet_r = fillet radius passed to tenon() shoulder transition (default 0).
 module arm(arm_length, toe_in_deg, tilt_deg,
            arm_root_h, arm_tip_h, arm_w,
            tenon_h_base, tenon_w_base, tenon_l_base,
            tenon_h_plat, tenon_w_plat, tenon_l_plat,
            insert_spacing,
+           fillet_r = 0,
            n_samples = 20) {
 
     union() {
@@ -104,7 +106,7 @@ module arm(arm_length, toe_in_deg, tilt_deg,
         // Build it pre-positioned so it sticks out the back of the arm
         difference() {
             rotate([90, 0, 0])  // orient tenon Z-axis to -Y direction
-                tenon(tenon_h_base, tenon_w_base, tenon_l_base);
+                tenon(tenon_h_base, tenon_w_base, tenon_l_base, fillet = fillet_r);
             // Insert holes in the tenon
             rotate([90, 0, 0])
                 insert_holes(tenon_w_base, tenon_l_base,
@@ -120,7 +122,7 @@ module arm(arm_length, toe_in_deg, tilt_deg,
             rotate([tip_pitch, 0, 0])
             rotate([-90, 0, 0])  // orient tenon to point along +Y (local)
             difference() {
-                tenon(tenon_h_plat, tenon_w_plat, tenon_l_plat);
+                tenon(tenon_h_plat, tenon_w_plat, tenon_l_plat, fillet = fillet_r);
                 insert_holes(tenon_w_plat, tenon_l_plat,
                              spacing = insert_spacing);
             }
