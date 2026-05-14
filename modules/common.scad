@@ -44,3 +44,19 @@ module rounded_cube(x, y, z, r, center = false) {
         }
     }
 }
+
+// fillet_solid(r): spherically rounds the external edges of any solid geometry.
+//   Unlike rounded_cube(), correctly handles unions — internal junctions stay
+//   sharp, only exposed external edges are rounded. Use render() inside for
+//   performance. Outer dimensions grow by r in all directions.
+module fillet_solid(r) {
+    fn_r = max(8, round($fn / 4));
+    if (r <= 0) {
+        children();
+    } else {
+        minkowski() {
+            render() children();
+            sphere(r = r, $fn = fn_r);
+        }
+    }
+}

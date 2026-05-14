@@ -32,18 +32,18 @@ module platform_body(plat_depth, plat_w, plat_t,
     //   Boss extends -Z (below the platform) at the back.
 
     difference() {
-        union() {
+        fillet_solid(edge_r) union() {
             // Main slab — origin at top face center
             translate([-plat_w/2, 0, -plat_t])
-                rounded_cube(plat_w, plat_depth, plat_t, edge_r);
+                cube([plat_w, plat_depth, plat_t]);
 
             // Boss — extends below the slab at the back, centered in X
             translate([-plat_boss_w/2, 0, -plat_t - plat_boss_extra_t])
-                rounded_cube(plat_boss_w, plat_boss_depth, plat_boss_extra_t, edge_r);
+                cube([plat_boss_w, plat_boss_depth, plat_boss_extra_t]);
 
             // Lip — sits on top of the platform at the front edge
             translate([-plat_w/2, plat_depth - lip_t, 0])
-                rounded_cube(plat_w, lip_t, lip_h, edge_r);
+                cube([plat_w, lip_t, lip_h]);
         }
 
         // Mortise pocket on the back face (y = 0), extending in +Y into the boss.
