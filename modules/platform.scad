@@ -4,18 +4,19 @@
 include <common.scad>;
 include <joinery.scad>;
 
-// platform(): oriented for print TOP-FACE-DOWN.
-//   Z = 0 is the speaker resting surface (in real life, this is the platform top;
-//        in print orientation, it's against the bed).
-//   Z = plat_t is the underside of the platform body.
-//   Boss extends from Z = -plat_t - plat_boss_extra_t to Z = -plat_t at the back
-//   (below the speaker surface).
-//   The mortise opens on the back face (y = 0) and extends in +Y into the boss.
-//   Lip extends in +Z direction (above the platform top, toward the speaker baffle).
+// platform(): modeled right-side-up (Z=0 is the speaker resting surface,
+//   +Z is up toward the speaker, -Z is down toward the boss/wall).
+//   The exported STL has the boss extending in -Z. When loaded in a slicer,
+//   the boss's lowest face naturally lands on the bed — this is the
+//   intended print orientation ("boss-face down"). The speaker resting
+//   surface prints upward as a clean top surface.
 //
-// Strategy: model the part RIGHT-SIDE-UP (top face = +Z), then the export
-//   script will apply a mirror or rotate transform to flip for printing.
-//   This keeps the modeling intuitive and the print orientation independent.
+//   Coordinate frame:
+//     +X = lateral right, +Y = forward (toward lip), +Z = up
+//     Back of platform at y = 0, front at y = plat_depth.
+//     Lip is at y = plat_depth, extending +Z direction (above the platform).
+//     Boss extends -Z (below the platform) at the back, opening into the
+//     mortise pocket where the arm tip tenon engages.
 
 module platform_body(plat_depth, plat_w, plat_t,
                      plat_boss_w, plat_boss_depth, plat_boss_extra_t,

@@ -205,7 +205,7 @@ The mechanical safety factor (~5×) in the design was calculated against PLA+ as
 | --- | --- | --- |
 | Base | Wall-facing face | Print right-side up; counterbores for wall screws on the up-facing side |
 | Arm | One of the lateral side faces | Print sits low; underside slope ~5° auto-bridges, no support needed |
-| Platform | Top face (speaker contact surface) | First layer becomes the speaker contact surface — print with fresh build plate |
+| Platform | **Boss-face down** (the boss contacts the bed) | Boss underside is hidden in assembly; first-layer aesthetics there don't matter. The speaker-resting surface prints upward (cleaner finish). |
 
 ### Workflow
 

@@ -37,7 +37,7 @@ This isolates tolerance-sensitive geometry to one place (the arm itself) and kee
 |---|---|---|---|
 | **P1 — Base** | Universal (1 STL) | Flat on bed, wall-face down | 100 × 180 × 22 mm |
 | **P2 — Arm** | Mirrored (2 STLs: `arm-left`, `arm-right`) | Laid on its side, height vertical | ~80 × 60 × 40 mm |
-| **P3 — Platform** | Universal (1 STL) | Flat on bed, top-face down | 220 × 134 × 22 mm (incl. boss) |
+| **P3 — Platform** | Universal (1 STL) | Flat on bed, boss-face down | 220 × 134 × 22 mm (incl. boss) |
 
 Per pair (two brackets): **4 unique STLs**, **6 prints total**.
 
@@ -201,9 +201,9 @@ All parameters exposed in OpenSCAD Customizer.
 |---|---|---|---|
 | Base | Wall-facing face (largest) | 22 mm | None |
 | Arm | Side face (the lateral 40 mm dimension) | 60 mm (root) tapering to 30 mm (tip) | None (taper angle within FDM overhang limits) |
-| Platform | Top face (speaker contact surface) | 22 mm (boss height) | None |
+| Platform | Boss face (boss contacts bed) | 22 mm (boss height) | None |
 
-Printing the platform top-face-down means the first layer is the speaker-resting surface — first-layer quality therefore matters for acoustic isolation contact. Compensate with a fresh build plate and a careful first layer.
+Printing the platform boss-face-down means the boss surface contacts the bed. The platform's top (speaker contact) surface is the up-facing surface during print, so first-layer aesthetics fall on the boss underside (which is hidden in assembly). The speaker-resting surface gets a clean print from being away from the bed.
 
 ---
 
@@ -236,7 +236,7 @@ All three surfaces are intentionally flat to accept any isolator material withou
 | Infill | 45% gyroid (minimum 35%) |
 | Top / bottom layers | 6 minimum |
 | Supports | None |
-| First layer (platform) | Slow, well-tuned — this becomes the speaker contact surface |
+| First layer (platform) | Standard — first layer lands on the hidden boss underside, not the speaker contact surface |
 
 ---
 
