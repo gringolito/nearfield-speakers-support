@@ -108,6 +108,14 @@ assert(boss_w <= base_w,
 assert(boss_h <= base_h - 2*WALL_SCREW_HEAD_D,
        "boss must not overlap the wall screw counterbores");
 
+// Platform boss must be wide enough to host the counterbore mouth
+// (Ø SCREW_M5_HEAD_D) plus the far-side wall on the opposite face.
+// The base's equivalent constraint is implied by the existing
+// "boss_w >= tenon_w_base + 2*MIN_BOSS_SCREW_WALL" assert above
+// (the mortise is wider than the counterbore mouth at M5).
+assert(plat_boss_w >= SCREW_M5_HEAD_D + MIN_BOSS_SCREW_WALL,
+       "plat_boss_w too small for counterbore mouth + far-side wall");
+
 // --- Stub modules (filled in by subsequent tasks) ---
 module base_module() {
     base_plate(base_h = base_h,

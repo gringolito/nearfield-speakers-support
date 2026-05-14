@@ -96,7 +96,10 @@ module platform_body(plat_depth, plat_w, plat_t,
         // positions as the old tenon_z_pos = -tenon_l_plat/2 call.
         translate([0, tenon_l_plat/2, mortise_z_center])
             rotate([-90, 0, 0])
-                clamping_screw_hole(piece_thru = plat_boss_w,
-                                    spacing    = insert_spacing);
+                clamping_screw_hole(piece_thru    = plat_boss_w,
+                                    spacing       = insert_spacing,
+                                    counterbore_d = SCREW_M5_HEAD_D,
+                                    counterbore_h = SCREW_M5_COUNTERBORE_DEPTH,
+                                    far_wall      = MIN_BOSS_SCREW_WALL);
     }
 }

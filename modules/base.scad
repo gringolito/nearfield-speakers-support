@@ -141,7 +141,10 @@ module base_plate(base_h, base_w, base_t,
         // local +Z (spacing axis) onto world +Y. piece_thru = boss_w.
         translate([base_w/2, mortise_center_y, screw_z_center])
             rotate([-90, 0, 0])
-                clamping_screw_hole(piece_thru = boss_w,
-                                    spacing    = insert_spacing);
+                clamping_screw_hole(piece_thru    = boss_w,
+                                    spacing       = insert_spacing,
+                                    counterbore_d = SCREW_M5_HEAD_D,
+                                    counterbore_h = SCREW_M5_COUNTERBORE_DEPTH,
+                                    far_wall      = MIN_BOSS_SCREW_WALL);
    }
 }
