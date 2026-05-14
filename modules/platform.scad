@@ -30,6 +30,13 @@ module platform_body(plat_depth, plat_w, plat_t,
     //   Back of platform at y = 0, front at y = plat_depth.
     //   Lip is at y = plat_depth, extending +Z direction (above the platform).
     //   Boss extends -Z (below the platform) at the back.
+    //
+    // The mortise center is placed at the geometric center of the full
+    // back face (slab + boss), so the arm tip face — which is centered on
+    // its tenon — lands centered on the platform back face. With the
+    // matching pair (plat_boss_w = arm_w, plat_t + plat_boss_extra_t =
+    // arm_tip_h) the boss + lower slab back face exactly covers the arm
+    // tip face, mirroring the base-boss / arm-root relationship.
 
     // Each piece's external faces are pre-inset by edge_r so that after
     // fillet_solid()'s minkowski expansion, the final outer dimensions
@@ -44,6 +51,8 @@ module platform_body(plat_depth, plat_w, plat_t,
     assert(plat_w   - 2*r > 0, "edge_r too large: plat_w - 2*edge_r must be > 0");
     assert(plat_boss_w     - 2*r > 0, "edge_r too large: plat_boss_w - 2*edge_r must be > 0");
     assert(plat_boss_depth - r   > 0, "edge_r too large: plat_boss_depth - edge_r must be > 0");
+    assert(plat_t + plat_boss_extra_t >= tenon_h_plat + 2*tenon_clearance,
+           "back face (plat_t + plat_boss_extra_t) too short to fit the mortise height (tenon_h_plat + 2*clearance)");
 
     difference() {
         intersection() {
@@ -67,8 +76,11 @@ module platform_body(plat_depth, plat_w, plat_t,
         }
 
         // Mortise pocket on the back face (y = 0), extending in +Y into the boss.
-        // Vertical center placed at the midpoint of the boss thickness.
-        mortise_z_center = -plat_t - plat_boss_extra_t/2;
+        // Centered at the geometric midpoint of the full back face
+        // (slab + boss), so the arm tip face — which is centered on its
+        // tenon — lands centered on the platform back face. Equivalent to
+        // mortise-drop-from-slab-top = (plat_t + plat_boss_extra_t)/2.
+        mortise_z_center = -(plat_t + plat_boss_extra_t) / 2;
         translate([0, 0, mortise_z_center])
             rotate([-90, 0, 0])  // map mortise long axis (+Z) to +Y (into boss)
                 mortise_cutout(tenon_h_plat, tenon_w_plat,

@@ -16,15 +16,15 @@ toe_in_deg = 26; // [20:1:30]
 tilt_deg   = 12; // [10:1:15]
 
 /* [Arm geometry] */
-arm_length  = 50;  // [50:5:100]
+arm_length  = 45;  // [40:5:100]
 arm_root_h  = 60;  // [50:5:70]
-arm_tip_h   = 32;  // [25:5:40]
+arm_tip_h   = 28;  // [25:1:40]
 arm_w       = 40;  // [35:5:50]
 
 /* [Base geometry] */
 base_h = 140; // [160:10:220]
-base_w = 90; // [80:10:140]
-base_t = 6;  // [10:2:28]
+base_w = 90;  // [80:10:140]
+base_t = 6;   // [10:2:28]
 
 /* [Base boss] */
 // Frontal boss at the arm joint. Sized to match the arm's root cross-section
@@ -32,21 +32,31 @@ base_t = 6;  // [10:2:28]
 // depth (in +Z) carries the lateral clamping screws into heat-set inserts in
 // the arm root tenon. The boss front face is intentionally clipped flat (no
 // fillet bulge) so it mates flush against the arm root.
-boss_w       = 40; // [30:2:50]   match arm_w
-boss_h       = 60; // [40:5:70]   match arm_root_h
-boss_depth   = 16; // [16:2:28]
+boss_w       = arm_w;      // [30:2:50]   match arm_w
+boss_h       = arm_root_h; // [40:5:70]   match arm_root_h
+boss_depth   = 16;         // [16:2:28]
 // Explicit chamfered skirt blending the boss into the slab. Height of the
 // chamfer along +Z; lateral expansion at the slab is equal to this. 0 =
 // no skirt (rely only on the minkowski fillet at the boss/slab corner).
 boss_blend_h = 4;  // [0:1:8]
 
 /* [Platform geometry] */
-plat_depth        = 220; // [200:10:300]
-plat_w            = 134; // [130:2:140]
-plat_t            = 8;   // [8:1:14]
-plat_boss_w       = 40;  // [50:5:80]
-plat_boss_depth   = 30;  // [25:5:40]
-plat_boss_extra_t = 16;  // [10:2:18]
+plat_depth        = 200;   // [200:10:300]
+plat_w            = 130;   // [130:2:140]
+plat_t            = 8;     // [8:1:14]
+plat_boss_w       = arm_w; // [30:2:50]   match arm_w
+plat_boss_depth   = 28;    // [25:5:40]
+// Total back-face height of the boss = plat_t + plat_boss_extra_t.
+// Sized to match arm_tip_h so the boss covers the entire arm tip face,
+// making the joint read as a single piece (mirrors how boss_h matches
+// arm_root_h at the base end of the arm).
+plat_boss_extra_t = arm_tip_h - plat_t;  // [10:1:32]   match arm_tip_h - plat_t
+// The mortise is centered at (plat_t + plat_boss_extra_t)/2 below the
+// slab top — i.e., at the geometric center of the back face — so the
+// arm tip face (also centered on its tenon) lands centered on the back
+// face. No standalone mortise-drop parameter is needed: the back-face
+// center IS the mortise. Keep plat_t + plat_boss_extra_t ≈ arm_tip_h to
+// make the boss/slab back face cover the arm tip face exactly.
 lip_h             = 15;  // [12:1:18]
 lip_t             = 5;   // [5:1:8]
 
@@ -183,7 +193,7 @@ module assembly_preview() {
         translate([tip_pos[0], tip_pos[1] + arm_y_offset, tip_pos[2]])
             rotate([0, 0, tip_yaw])
             rotate([tip_pitch, 0, 0])
-                translate([0, 0, plat_t + plat_boss_extra_t/2])
+                translate([0, 0, (plat_t + plat_boss_extra_t) / 2])
                     platform_module();
 }
 
