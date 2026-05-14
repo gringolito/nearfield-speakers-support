@@ -50,8 +50,10 @@ insert_spacing  = 10;
 wall_screw_count   = 2;
 wall_screw_spacing = 100;
 
-/* [Fillets] */
-fillet_r = 0; // [1:1:6]
+/* [Fillets & Chamfers] */
+edge_r   = 1.0; // [0:0.5:6]
+fillet_r = 1.0; // [0:0.5:6]
+chamfer  = 1.0; // [0:0.5:6]
 
 /* [Quality] */
 $fn = 64;
@@ -76,7 +78,8 @@ module base_module() {
                wall_screw_count = wall_screw_count,
                wall_screw_spacing = wall_screw_spacing,
                insert_spacing = insert_spacing,
-               fillet_r = fillet_r);
+               chamfer = chamfer,
+               edge_r = edge_r);
 }
 module arm_module() {
     arm(arm_length = arm_length,
@@ -92,7 +95,8 @@ module arm_module() {
         tenon_w_plat = tenon_w_plat,
         tenon_l_plat = tenon_l_plat,
         insert_spacing = insert_spacing,
-        fillet_r = fillet_r);
+        fillet_r = fillet_r,
+        edge_r = edge_r);
 }
 module platform_module() {
     platform_body(plat_depth = plat_depth,
@@ -108,7 +112,8 @@ module platform_module() {
                   tenon_l_plat = tenon_l_plat,
                   tenon_clearance = tenon_clearance,
                   insert_spacing = insert_spacing,
-                  fillet_r = fillet_r);
+                  chamfer = chamfer,
+                  edge_r = edge_r);
 }
 module assembly_preview() {
     // Show the right-hand bracket assembled.
