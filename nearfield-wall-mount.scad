@@ -48,7 +48,7 @@ plat_depth        = 200;   // [200:10:300]
 plat_w            = 130;   // [130:2:140]
 plat_t            = 8;     // [8:1:14]
 plat_boss_w       = arm_w; // [30:2:50]   match arm_w
-plat_boss_depth   = 28;    // [25:5:40]
+plat_boss_depth   = 28;    // [25:1:40]
 // Total back-face height of the boss = plat_t + plat_boss_extra_t.
 // Sized to match arm_tip_h so the boss covers the entire arm tip face,
 // making the joint read as a single piece (mirrors how boss_h matches
