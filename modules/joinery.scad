@@ -115,8 +115,12 @@ module clamping_screw_hole(piece_thru,
                            shank_length     = 0) {
     z_centers = [spacing_center_z - spacing/2,
                  spacing_center_z + spacing/2];
+    // shank_h adds 2*PRINT_EPSILON so the cylinder cleanly overshoots
+    // both the entry face (where it starts at -piece_thru/2 - EPS) and
+    // the inner end (where it should break through into the mortise air
+    // by at least EPS for CGAL to fuse the surfaces).
     shank_h = (shank_length > 0)
-        ? shank_length + PRINT_EPSILON
+        ? shank_length + 2*PRINT_EPSILON
         : piece_thru + 2*PRINT_EPSILON;
     for (z = z_centers) {
         // Shank clearance hole
