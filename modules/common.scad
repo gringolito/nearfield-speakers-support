@@ -1,20 +1,31 @@
 // modules/common.scad
 // Shared constants and small utilities.
 
-// --- M5 heat-set insert geometry ---
-INSERT_M5_OD     = 6.4;   // outer diameter to drill into the plastic
-INSERT_M5_DEPTH  = 8.0;   // depth of the heat-set insert
-INSERT_M5_LEAD   = 0.3;   // small lead-in chamfer at the mouth
+// --- M4 heat-set insert geometry ---
+INSERT_M4_OD     = 5.7;   // outer diameter to drill into the plastic
+INSERT_M4_DEPTH  = 6.0;   // depth of the heat-set insert
+INSERT_M4_LEAD   = 0.3;   // small lead-in chamfer at the mouth
 
-// --- M5 clamping screw geometry ---
-SCREW_M5_D       = 5.2;   // clearance hole diameter (slightly oversized)
-SCREW_M5_HEAD_D  = 8.8;   // M5 SHCS head diameter (with margin)
-SCREW_M5_HEAD_H  = 5.0;   // M5 SHCS head height (for counterbore)
+// --- M4 clamping screw geometry ---
+SCREW_M4_D       = 4.3;   // clearance hole diameter (slightly oversized)
+SCREW_M4_HEAD_D  = 7.5;   // M4 SHCS head diameter (with margin)
+SCREW_M4_HEAD_H  = 4.0;   // M4 SHCS head height (for counterbore)
 
-// Cosmetic counterbore depth for the M5 clamping screw head on the
+// Cosmetic counterbore depth for the M4 clamping screw head on the
 // boss's entry face. Partial recess only — head still sits proud by
-// (SCREW_M5_HEAD_H - SCREW_M5_COUNTERBORE_DEPTH) mm. Increasing this
+// (SCREW_M4_HEAD_H - SCREW_M4_COUNTERBORE_DEPTH) mm. Increasing this
 // risks weakening the boss wall on the entry side.
+SCREW_M4_COUNTERBORE_DEPTH = 2.0;
+
+// --- M5 heat-set insert geometry (reference, not used) ---
+INSERT_M5_OD     = 6.4;
+INSERT_M5_DEPTH  = 8.0;
+INSERT_M5_LEAD   = 0.3;
+
+// --- M5 clamping screw geometry (reference, not used) ---
+SCREW_M5_D       = 5.2;
+SCREW_M5_HEAD_D  = 8.8;
+SCREW_M5_HEAD_H  = 5.0;
 SCREW_M5_COUNTERBORE_DEPTH = 2.0;
 
 // Minimum thickness of plastic to retain on the side of the boss

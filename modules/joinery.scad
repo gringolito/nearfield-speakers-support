@@ -73,7 +73,7 @@ module mortise_cutout(h, w, l, clearance = 0.1, chamfer = 0) {
 //   Holes are along the tenon's W axis (lateral), entering from -X side.
 //   Holes are spaced symmetrically about the tenon's mid-length.
 module insert_holes(tenon_w, tenon_l, spacing = 10,
-                    depth = INSERT_M5_DEPTH, od = INSERT_M5_OD) {
+                    depth = INSERT_M4_DEPTH, od = INSERT_M4_OD) {
     z_centers = [tenon_l/2 - spacing/2, tenon_l/2 + spacing/2];
     for (z = z_centers) {
         translate([-tenon_w/2 - PRINT_EPSILON, 0, z])
@@ -96,7 +96,7 @@ module insert_holes(tenon_w, tenon_l, spacing = 10,
 //     spacing_center_z Z position (local) of the midpoint between the
 //                      two holes. Default 0.
 //     spacing          center-to-center spacing of the two holes along Z.
-//     screw_d          shank clearance diameter (default SCREW_M5_D).
+//     screw_d          shank clearance diameter (default SCREW_M4_D).
 //     counterbore_d    if > 0, cuts a cylindrical counterbore of this
 //                      diameter at the -X entry, depth counterbore_h. Used
 //                      to partially recess the SHCS head.
@@ -109,7 +109,7 @@ module insert_holes(tenon_w, tenon_l, spacing = 10,
 module clamping_screw_hole(piece_thru,
                            spacing_center_z = 0,
                            spacing          = 10,
-                           screw_d          = SCREW_M5_D,
+                           screw_d          = SCREW_M4_D,
                            counterbore_d    = 0,
                            counterbore_h    = 0,
                            shank_length     = 0) {

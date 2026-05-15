@@ -155,8 +155,8 @@ module arm(arm_length, toe_in_deg, tilt_deg,
                                dy,
                                base_insert_z])
                         rotate([0, 90, 0])
-                            cylinder(d = INSERT_M5_OD,
-                                     h = INSERT_M5_DEPTH + PRINT_EPSILON);
+                            cylinder(d = INSERT_M4_OD,
+                                     h = INSERT_M4_DEPTH + PRINT_EPSILON);
                 }
             }
 
