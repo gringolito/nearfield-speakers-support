@@ -25,7 +25,7 @@ MIN_BOSS_SCREW_WALL = 3.0;
 // --- M6 wall screw geometry ---
 WALL_SCREW_D       = 6.5;   // clearance for 6 mm wood screw
 WALL_SCREW_HEAD_D  = 12.0;  // countersunk head diameter
-WALL_SCREW_HEAD_H  = 3.0;   // counterbore depth
+WALL_SCREW_HEAD_H  = 2.0;   // counterbore depth
 
 // --- Print tolerances ---
 PRINT_EPSILON = 0.01;       // overlap to avoid coplanar-face artifacts
