@@ -99,8 +99,8 @@ module platform_body(plat_depth, plat_w, plat_t,
             rotate([-90, 0, 0])
                 clamping_screw_hole(piece_thru    = plat_boss_w,
                                     spacing       = insert_spacing,
-                                    counterbore_d = SCREW_M5_HEAD_D,
-                                    counterbore_h = SCREW_M5_COUNTERBORE_DEPTH,
+                                    counterbore_d = SCREW_M4_HEAD_D,
+                                    counterbore_h = SCREW_M4_COUNTERBORE_DEPTH,
                                     shank_length  = near_wall_t);
     }
 }

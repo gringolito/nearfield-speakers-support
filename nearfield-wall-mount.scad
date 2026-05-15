@@ -37,7 +37,7 @@ base_t = 6;   // [6:2:28]
 // fillet bulge) so it mates flush against the arm root.
 boss_w       = arm_w;      // [30:2:50]   match arm_w
 boss_h       = arm_root_h; // [40:5:70]   match arm_root_h
-boss_depth   = 16;         // [16:2:28]
+boss_depth   = 15;         // [15:1:25]
 // Explicit chamfered skirt blending the boss into the slab. Height of the
 // chamfer along +Z; lateral expansion at the slab is equal to this. 0 =
 // no skirt (rely only on the minkowski fillet at the boss/slab corner).
@@ -97,12 +97,12 @@ assert(arm_tip_h <= arm_root_h,
 // thick enough to clear the screw diameter on either side. Each free face
 // of the boss should retain at least MIN_BOSS_SCREW_WALL mm of plastic
 // around the screw to keep more than one perimeter at 0.4 mm nozzle.
-assert(boss_h >= insert_spacing + SCREW_M5_D + 2*MIN_BOSS_SCREW_WALL,
+assert(boss_h >= insert_spacing + SCREW_M4_D + 2*MIN_BOSS_SCREW_WALL,
        "boss_h too small to safely host two vertically-stacked lateral screws");
 // The lateral screw sits at the midpoint of the boss main body (above
 // the skirt), so the binding constraint is the main-body height, not the
 // total boss depth. Main-body height = boss_depth - boss_blend_h.
-assert(boss_depth - boss_blend_h >= SCREW_M5_D + 2*MIN_BOSS_SCREW_WALL,
+assert(boss_depth - boss_blend_h >= SCREW_M4_D + 2*MIN_BOSS_SCREW_WALL,
        "boss main body too short to host the lateral screw between skirt top and front face");
 assert(boss_w >= tenon_w_base + 2*MIN_BOSS_SCREW_WALL,
        "boss_w must be wider than the mortise plus screw-wall margins");
@@ -112,11 +112,11 @@ assert(boss_h <= base_h - 2*WALL_SCREW_HEAD_D,
        "boss must not overlap the wall screw counterbores");
 
 // Platform boss must be wide enough to host the counterbore mouth
-// (Ø SCREW_M5_HEAD_D) plus the far-side wall on the opposite face.
+// (Ø SCREW_M4_HEAD_D) plus the far-side wall on the opposite face.
 // The base's equivalent constraint is implied by the existing
 // "boss_w >= tenon_w_base + 2*MIN_BOSS_SCREW_WALL" assert above
-// (the mortise is wider than the counterbore mouth at M5).
-assert(plat_boss_w >= SCREW_M5_HEAD_D + MIN_BOSS_SCREW_WALL,
+// (the mortise is wider than the counterbore mouth at M4).
+assert(plat_boss_w >= SCREW_M4_HEAD_D + MIN_BOSS_SCREW_WALL,
        "plat_boss_w too small for counterbore mouth + far-side wall");
 
 // --- Stub modules (filled in by subsequent tasks) ---

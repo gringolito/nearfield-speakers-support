@@ -15,7 +15,7 @@ I needed to mount a pair of bookshelf speakers above my monitors for nearfield d
 
 The two acoustic angles that matter are **toe-in** (horizontal rotation toward the listening position) and **tilt** (downward angle to aim the tweeter at ear height). Getting these exactly right is a one-time calibration — after that, nothing should ever move.
 
-This bracket encodes both angles structurally. All angular complexity lives in the 3D-curved arm body. The base plate has only perpendicular features. The platform is a flat slab. Both join the arm via perpendicular tenon-mortise interfaces. Each joint is a guided tenon locked with two M5 screws: the tenon handles shear by geometry, the screws only provide clamping force. On the base side the mortise passes all the way through a frontal boss whose footprint matches the arm root — the boss localises the clamp material to the joint so the rest of the base can stay thin.
+This bracket encodes both angles structurally. All angular complexity lives in the 3D-curved arm body. The base plate has only perpendicular features. The platform is a flat slab. Both join the arm via perpendicular tenon-mortise interfaces. Each joint is a guided tenon locked with two M4 screws: the tenon handles shear by geometry, the screws only provide clamping force. On the base side the mortise passes all the way through a frontal boss whose footprint matches the arm root — the boss localises the clamp material to the joint so the rest of the base can stay thin.
 
 The three-piece split exists because a single-piece bracket for this geometry would not fit on a 225 × 225 mm print bed. The split is also a feature: to try different toe-in or tilt angles you reprint only the arm. All three pieces are handed (right/left), so a pair of speakers needs six STL files in total.
 
@@ -38,7 +38,7 @@ WALL                                                                  FRONT
  │
  │  ┌──────────┐     ╭──────╮                       ┌───────────────────┬──┐
  │  │   BASE   │◄────┤ ARM  ├──────tangent at 26°───┤    PLATFORM       │ ▲│
- │  │  90×140  │ M5  │ curve│  curves down 12°      │    200 × 130      │  │
+ │  │  90×140  │ M4  │ curve│  curves down 12°      │    200 × 130      │  │
  │  │   L/R    │     │ L/R  │                       │       L/R         │  │
  │  └──────────┘     ╰──────╯                       └───────────────────┴──┘
  │  vertical pair                                                       lip
@@ -101,20 +101,20 @@ Hardware required **per bracket** — double everything for a pair:
 
 | Item | Quantity |
 |---|---|
-| M5 × 16 mm socket head cap screw | 4× (2 per joint, 2 joints) |
-| M5 heat-set insert (OD 6.4 mm, depth 8 mm) | 4× (2 per arm tenon, 2 tenons) |
+| M4 × 14 mm socket head cap screw | 4× (2 per joint, 2 joints) |
+| M4 heat-set insert (OD 5.7 mm, depth 6 mm) | 4× (2 per arm tenon, 2 tenons) |
 | M6 wall screw (~60 mm) | 2× |
 | Wall anchor (drywall / masonry / wood) | 2× |
 | Dense EVA or neoprene sheet, 2–4 mm | cut to fit |
 
 **Steps:**
 
-1. Press-fit the four M5 heat-set inserts into the arm: 2× in the root tenon (base side), 2× in the tip tenon (platform side).
+1. Press-fit the four M4 heat-set inserts into the arm: 2× in the root tenon (base side), 2× in the tip tenon (platform side).
 2. Mount the base to the wall with two M6 screws into wall anchors. The two holes are centered laterally in a vertical pair.
 3. Slide the arm's root tenon into the base mortise. The perpendicular mortise guides the tenon; the arm's curved body sets the toe-in angle automatically.
-4. Insert two M5 × 16 mm screws through the base's lateral clamping holes and thread them into the inserts in the arm's root tenon. Tighten until both flange faces are in firm contact.
+4. Insert two M4 × 14 mm screws through the base's lateral clamping holes and thread them into the inserts in the arm's root tenon. Tighten until both flange faces are in firm contact.
 5. Slide the platform's back mortise onto the arm's tip tenon. Use the same handedness for arm and platform (right with right, left with left); the arm's curved tip establishes the tilt angle automatically.
-6. Insert two M5 × 16 mm screws through the platform's clamping holes and tighten.
+6. Insert two M4 × 14 mm screws through the platform's clamping holes and tighten.
 7. Apply EVA or neoprene pads (see [Vibration isolation](#vibration-isolation)).
 8. Place the speaker on the platform.
 
@@ -163,7 +163,7 @@ Size `base_h × base_w` so the wall-screw counterbores have at least `WALL_SCREW
 ```openscad
 boss_w       = arm_w;      // boss width  (mm) [30–50]   defaults to arm_w
 boss_h       = arm_root_h; // boss height (mm) [40–70]   defaults to arm_root_h
-boss_depth   = 16;         // boss protrusion from slab (mm) [16–28]
+boss_depth   = 15;         // boss protrusion from slab (mm) [15–25]
 boss_blend_h = 4;          // chamfered skirt height (mm) [0–8]
 ```
 
@@ -201,10 +201,10 @@ tenon_h_base    = 25;  // base tenon height (mm)
 tenon_w_base    = 22;  // base tenon width  (mm)
 // tenon_l_base = base_t + boss_depth  (passthrough — computed, not set)
 tenon_clearance = 0.1; // per-side clearance in mortise (mm)
-insert_spacing  = 10;  // vertical spacing between the two M5 inserts (mm)
+insert_spacing  = 10;  // vertical spacing between the two M4 inserts (mm)
 ```
 
-Each joint is a guided rectangular tenon locked with two M5 screws into heat-set inserts. The base tenon is fully passthrough (its length is computed). `insert_spacing` is the center-to-center distance between the two inserts in each tenon — they form a moment couple that resists bending about the lateral axis.
+Each joint is a guided rectangular tenon locked with two M4 screws into heat-set inserts. The base tenon is fully passthrough (its length is computed). `insert_spacing` is the center-to-center distance between the two inserts in each tenon — they form a moment couple that resists bending about the lateral axis.
 
 ### Wall mounting
 
@@ -308,7 +308,7 @@ This project is licensed CC BY-SA 4.0. Adapt it freely — change dimensions, ad
 Some directions worth exploring:
 
 - **Larger print bed:** With a 300 × 300 mm bed, the arm and platform can be merged into a single cantilever — the three-piece split exists only to fit a 225 × 225 mm constraint.
-- **Different fastener sizes:** Replace the M5 hardware by adjusting the constants in `modules/common.scad` (`INSERT_M5_OD`, `INSERT_M5_DEPTH`, `SCREW_M5_D`, `SCREW_M5_HEAD_D`, `SCREW_M5_COUNTERBORE_DEPTH`).
+- **Different fastener sizes:** Replace the M4 hardware by adjusting the constants in `modules/common.scad` (`INSERT_M4_OD`, `INSERT_M4_DEPTH`, `SCREW_M4_D`, `SCREW_M4_HEAD_D`, `SCREW_M4_COUNTERBORE_DEPTH`).
 - **Ceiling mount:** Invert the tilt direction and flip the base plate geometry for overhead installation.
 - **Monitor arm integration:** Replace the base with a VESA receiver or clamp adapter while keeping the arm and platform unchanged.
 - **Different materials:** The geometry was designed for FDM/PLA+. For SLA or CNC machining, the arm taper profile can be simplified significantly.
