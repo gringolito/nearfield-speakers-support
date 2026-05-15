@@ -151,9 +151,9 @@ arm_w      = 40; // arm cross-section width (lateral, mm) [35–50]
 ### Base plate
 
 ```openscad
-base_h = 140; // base plate height (mm) [160–220]
+base_h = 140; // base plate height (mm) [140–220]
 base_w = 90;  // base plate width  (mm) [80–140]
-base_t = 6;   // slab thickness    (mm) [10–28]
+base_t = 6;   // slab thickness    (mm) [6–28]
 ```
 
 Size `base_h × base_w` so the wall-screw counterbores have at least `WALL_SCREW_HEAD_D` clearance around them. `base_t` is the slab thickness; the boss adds another `boss_depth` of material in front of the joint.

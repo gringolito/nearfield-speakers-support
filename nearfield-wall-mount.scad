@@ -25,9 +25,9 @@ arm_tip_h   = 28;  // [25:1:40]
 arm_w       = 40;  // [35:5:50]
 
 /* [Base geometry] */
-base_h = 140; // [160:10:220]
+base_h = 140; // [140:10:220]
 base_w = 90;  // [80:10:140]
-base_t = 6;   // [10:2:28]
+base_t = 6;   // [6:2:28]
 
 /* [Base boss] */
 // Frontal boss at the arm joint. Sized to match the arm's root cross-section
