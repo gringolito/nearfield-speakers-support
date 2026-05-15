@@ -8,8 +8,11 @@ include <modules/platform.scad>;
 include <modules/arm.scad>;
 
 /* [Render] */
-// 0 = assembly preview, 1 = base, 2 = arm-right, 3 = arm-left, 4 = platform
-render_piece = 0; // [0:assembly, 1:base, 2:arm-right, 3:arm-left, 4:platform]
+// 0 = assembly preview
+// 1 = base-right          2 = base-left
+// 3 = arm-right           4 = arm-left
+// 5 = platform-right      6 = platform-left
+render_piece = 0; // [0:assembly, 1:base-right, 2:base-left, 3:arm-right, 4:arm-left, 5:platform-right, 6:platform-left]
 
 /* [Acoustic angles] */
 toe_in_deg = 26; // [20:1:30]
@@ -22,9 +25,9 @@ arm_tip_h   = 28;  // [25:1:40]
 arm_w       = 40;  // [35:5:50]
 
 /* [Base geometry] */
-base_h = 140; // [160:10:220]
+base_h = 140; // [140:10:220]
 base_w = 90;  // [80:10:140]
-base_t = 6;   // [10:2:28]
+base_t = 6;   // [6:2:28]
 
 /* [Base boss] */
 // Frontal boss at the arm joint. Sized to match the arm's root cross-section
@@ -45,7 +48,7 @@ plat_depth        = 200;   // [200:10:300]
 plat_w            = 130;   // [130:2:140]
 plat_t            = 8;     // [8:1:14]
 plat_boss_w       = arm_w; // [30:2:50]   match arm_w
-plat_boss_depth   = 28;    // [25:5:40]
+plat_boss_depth   = 28;    // [25:1:40]
 // Total back-face height of the boss = plat_t + plat_boss_extra_t.
 // Sized to match arm_tip_h so the boss covers the entire arm tip face,
 // making the joint read as a single piece (mirrors how boss_h matches
@@ -94,7 +97,6 @@ assert(arm_tip_h <= arm_root_h,
 // thick enough to clear the screw diameter on either side. Each free face
 // of the boss should retain at least MIN_BOSS_SCREW_WALL mm of plastic
 // around the screw to keep more than one perimeter at 0.4 mm nozzle.
-MIN_BOSS_SCREW_WALL = 3;  // mm
 assert(boss_h >= insert_spacing + SCREW_M5_D + 2*MIN_BOSS_SCREW_WALL,
        "boss_h too small to safely host two vertically-stacked lateral screws");
 // The lateral screw sits at the midpoint of the boss main body (above
@@ -108,6 +110,14 @@ assert(boss_w <= base_w,
        "boss must fit within the base footprint laterally");
 assert(boss_h <= base_h - 2*WALL_SCREW_HEAD_D,
        "boss must not overlap the wall screw counterbores");
+
+// Platform boss must be wide enough to host the counterbore mouth
+// (Ø SCREW_M5_HEAD_D) plus the far-side wall on the opposite face.
+// The base's equivalent constraint is implied by the existing
+// "boss_w >= tenon_w_base + 2*MIN_BOSS_SCREW_WALL" assert above
+// (the mortise is wider than the counterbore mouth at M5).
+assert(plat_boss_w >= SCREW_M5_HEAD_D + MIN_BOSS_SCREW_WALL,
+       "plat_boss_w too small for counterbore mouth + far-side wall");
 
 // --- Stub modules (filled in by subsequent tasks) ---
 module base_module() {
@@ -200,7 +210,9 @@ module assembly_preview() {
 // --- Dispatch ---
 if      (render_piece == 0) assembly_preview();
 else if (render_piece == 1) base_module();
-else if (render_piece == 2) arm_module();
-else if (render_piece == 3) mirror([1,0,0]) arm_module();
-else if (render_piece == 4) platform_module();
+else if (render_piece == 2) mirror([1,0,0]) base_module();
+else if (render_piece == 3) arm_module();
+else if (render_piece == 4) mirror([1,0,0]) arm_module();
+else if (render_piece == 5) platform_module();
+else if (render_piece == 6) mirror([1,0,0]) platform_module();
 else assert(false, str("unknown render_piece: ", render_piece));

@@ -134,17 +134,23 @@ module base_plate(base_h, base_w, base_t,
                          h = WALL_SCREW_HEAD_H + PRINT_EPSILON);
         }
 
-        // Lateral clamping screw holes through the boss. Two holes spaced
-        // along Y (= vertical when wall-mounted), centered at the boss's
-        // mid-depth Z. Vertical spacing creates a moment couple that
-        // resists the bending moment about the lateral X axis.
-        for (dy = [-insert_spacing/2, insert_spacing/2]) {
-            translate([base_w/2 - boss_w/2 - PRINT_EPSILON,
-                       mortise_center_y + dy,
-                       screw_z_center])
-                rotate([0, 90, 0])
-                    cylinder(d = SCREW_M5_D,
-                             h = boss_w + 2*PRINT_EPSILON);
-        }
+        // Lateral clamping screw holes through the boss. Two holes stacked
+        // along Y (vertical when wall-mounted) at the boss's mid-depth Z
+        // (= screw_z_center, the midpoint of the boss main body above the
+        // chamfered skirt). The rotate([-90, 0, 0]) maps the helper's
+        // local +Z (spacing axis) onto world +Y.
+        //
+        // shank_length is the thickness of the near (-X) boss wall up to
+        // the mortise pocket — the screw only needs clearance through this
+        // wall, then crosses the mortise cavity (already air) and engages
+        // the insert in the arm tenon. The far (+X) boss wall stays solid.
+        near_wall_t = (boss_w - tenon_w_base) / 2 - tenon_clearance;
+        translate([base_w/2, mortise_center_y, screw_z_center])
+            rotate([-90, 0, 0])
+                clamping_screw_hole(piece_thru    = boss_w,
+                                    spacing       = insert_spacing,
+                                    counterbore_d = SCREW_M5_HEAD_D,
+                                    counterbore_h = SCREW_M5_COUNTERBORE_DEPTH,
+                                    shank_length  = near_wall_t);
    }
 }

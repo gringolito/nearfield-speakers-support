@@ -82,20 +82,58 @@ module insert_holes(tenon_w, tenon_l, spacing = 10,
     }
 }
 
-// clamping_screw_hole(piece_thru, tenon_z_pos, tenon_l, spacing, screw_d):
-//   Cuts 2 horizontal clearance holes through the receiving piece
-//   (base or platform), passing through the mortise pocket and out the
-//   far face. piece_thru = total lateral travel distance for the screw.
-//   Origin matches insert_holes: holes pierce through the piece from
-//   one side, ending in the inserts on the far side of the tenon.
-module clamping_screw_hole(piece_thru, tenon_z_pos = 0, tenon_l = 17,
-                           spacing = 10, screw_d = SCREW_M5_D) {
-    z_centers = [tenon_z_pos + tenon_l/2 - spacing/2,
-                 tenon_z_pos + tenon_l/2 + spacing/2];
+// clamping_screw_hole(piece_thru, spacing_center_z, spacing,
+//                     screw_d, counterbore_d, counterbore_h, shank_length):
+//   Cuts a pair of horizontal clearance holes through the receiving piece
+//   (base or platform), entering on the -X face of the boss. The hole's
+//   axis runs along local +X; the two holes are stacked along local +Z,
+//   centered on spacing_center_z.
+//
+//   Args:
+//     piece_thru       lateral travel distance the screw COULD take
+//                      (typically = boss width); used as fallback when
+//                      shank_length is 0.
+//     spacing_center_z Z position (local) of the midpoint between the
+//                      two holes. Default 0.
+//     spacing          center-to-center spacing of the two holes along Z.
+//     screw_d          shank clearance diameter (default SCREW_M5_D).
+//     counterbore_d    if > 0, cuts a cylindrical counterbore of this
+//                      diameter at the -X entry, depth counterbore_h. Used
+//                      to partially recess the SHCS head.
+//     counterbore_h    counterbore axial depth from the entry face.
+//     shank_length     if > 0, the clearance hole is this long along +X
+//                      from the entry face (use this when the screw passes
+//                      through only the near boss wall before crossing the
+//                      mortise cavity). If 0 (the default), the shank
+//                      pierces the full piece_thru.
+module clamping_screw_hole(piece_thru,
+                           spacing_center_z = 0,
+                           spacing          = 10,
+                           screw_d          = SCREW_M5_D,
+                           counterbore_d    = 0,
+                           counterbore_h    = 0,
+                           shank_length     = 0) {
+    z_centers = [spacing_center_z - spacing/2,
+                 spacing_center_z + spacing/2];
+    // shank_h adds 2*PRINT_EPSILON so the cylinder cleanly overshoots
+    // both the entry face (where it starts at -piece_thru/2 - EPS) and
+    // the inner end (where it should break through into the mortise air
+    // by at least EPS for CGAL to fuse the surfaces).
+    shank_h = (shank_length > 0)
+        ? shank_length + 2*PRINT_EPSILON
+        : piece_thru + 2*PRINT_EPSILON;
     for (z = z_centers) {
+        // Shank clearance hole
         translate([-piece_thru/2 - PRINT_EPSILON, 0, z])
             rotate([0, 90, 0])
-                cylinder(d = screw_d, h = piece_thru + 2*PRINT_EPSILON);
+                cylinder(d = screw_d, h = shank_h);
+        // Optional counterbore for the screw head at the -X entry face
+        if (counterbore_d > 0 && counterbore_h > 0) {
+            translate([-piece_thru/2 - PRINT_EPSILON, 0, z])
+                rotate([0, 90, 0])
+                    cylinder(d = counterbore_d,
+                             h = counterbore_h + PRINT_EPSILON);
+        }
     }
 }
 

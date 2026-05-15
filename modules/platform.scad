@@ -87,14 +87,20 @@ module platform_body(plat_depth, plat_w, plat_t,
                                tenon_l_plat, clearance = tenon_clearance,
                                chamfer = chamfer);
 
-        // 2 lateral clamping screw holes piercing through the boss,
+        // 2 lateral clamping screw holes through the near (-X) boss wall,
         // aligned with the inserts in the inserted tenon (insert centers
-        // at y = tenon_l_plat/2 ± insert_spacing/2).
+        // at y = tenon_l_plat/2 ± insert_spacing/2). The screw only needs
+        // clearance through the near wall — beyond the wall the mortise
+        // pocket is already air, and the threaded engagement happens in
+        // the arm tenon's insert. The far (+X) boss wall stays solid.
+        // Map clamping_screw_hole's local +Z (spacing axis) onto world +Y.
+        near_wall_t = (plat_boss_w - tenon_w_plat) / 2 - tenon_clearance;
         translate([0, tenon_l_plat/2, mortise_z_center])
             rotate([-90, 0, 0])
-                clamping_screw_hole(piece_thru = plat_boss_w,
-                                    tenon_z_pos = -tenon_l_plat/2,
-                                    tenon_l = tenon_l_plat,
-                                    spacing = insert_spacing);
+                clamping_screw_hole(piece_thru    = plat_boss_w,
+                                    spacing       = insert_spacing,
+                                    counterbore_d = SCREW_M5_HEAD_D,
+                                    counterbore_h = SCREW_M5_COUNTERBORE_DEPTH,
+                                    shank_length  = near_wall_t);
     }
 }

@@ -27,8 +27,16 @@ jobs:
       - name: Render PNGs
         run: |
           mkdir -p renders
-          declare -A NAMES=([0]=assembly [1]=base [2]=arm-right [3]=arm-left [4]=platform)
-          for piece in 0 1 2 3 4; do
+          declare -A NAMES=(
+            [0]=assembly
+            [1]=base-right
+            [2]=base-left
+            [3]=arm-right
+            [4]=arm-left
+            [5]=platform-right
+            [6]=platform-left
+          )
+          for piece in 0 1 2 3 4 5 6; do
             xvfb-run -a openscad \
               --render \
               --imgsize=1200,900 \
@@ -111,9 +119,13 @@ jobs:
               marker,
               '## OpenSCAD Renders',
               '',
-              '| Assembly | Base | Arm Right | Arm Left | Platform |',
-              '| --- | --- | --- | --- | --- |',
-              `| ![assembly](${base}/assembly.png) | ![base](${base}/base.png) | ![arm-right](${base}/arm-right.png) | ![arm-left](${base}/arm-left.png) | ![platform](${base}/platform.png) |`,
+              '### Assembly',
+              `![assembly](${base}/assembly.png)`,
+              '',
+              '### Pieces',
+              '| Base Right | Base Left | Arm Right | Arm Left | Platform Right | Platform Left |',
+              '| --- | --- | --- | --- | --- | --- |',
+              `| ![base-right](${base}/base-right.png) | ![base-left](${base}/base-left.png) | ![arm-right](${base}/arm-right.png) | ![arm-left](${base}/arm-left.png) | ![platform-right](${base}/platform-right.png) | ![platform-left](${base}/platform-left.png) |`,
             ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
@@ -155,10 +167,12 @@ jobs:
             ROWS="${ROWS}${ROW}"$'\n'
           }
 
-          check stl/base.stl       225 225 265
-          check stl/arm-right.stl  225 225 265
-          check stl/arm-left.stl   225 225 265
-          check stl/platform.stl   225 225 265
+          check stl/base-right.stl      225 225 265
+          check stl/base-left.stl       225 225 265
+          check stl/arm-right.stl       225 225 265
+          check stl/arm-left.stl        225 225 265
+          check stl/platform-right.stl  225 225 265
+          check stl/platform-left.stl   225 225 265
 
           {
             echo "| File | Manifold | Dimensions | Triangles | Result |"

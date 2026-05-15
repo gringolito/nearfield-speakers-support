@@ -11,10 +11,21 @@ SCREW_M5_D       = 5.2;   // clearance hole diameter (slightly oversized)
 SCREW_M5_HEAD_D  = 8.8;   // M5 SHCS head diameter (with margin)
 SCREW_M5_HEAD_H  = 5.0;   // M5 SHCS head height (for counterbore)
 
+// Cosmetic counterbore depth for the M5 clamping screw head on the
+// boss's entry face. Partial recess only — head still sits proud by
+// (SCREW_M5_HEAD_H - SCREW_M5_COUNTERBORE_DEPTH) mm. Increasing this
+// risks weakening the boss wall on the entry side.
+SCREW_M5_COUNTERBORE_DEPTH = 2.0;
+
+// Minimum thickness of plastic to retain on the side of the boss
+// opposite the clamping-screw entry (the "far wall"). Also reused as
+// the safety margin around each screw vs. the boss's free faces.
+MIN_BOSS_SCREW_WALL = 3.0;
+
 // --- M6 wall screw geometry ---
 WALL_SCREW_D       = 6.5;   // clearance for 6 mm wood screw
 WALL_SCREW_HEAD_D  = 12.0;  // countersunk head diameter
-WALL_SCREW_HEAD_H  = 3.0;   // counterbore depth
+WALL_SCREW_HEAD_H  = 2.0;   // counterbore depth
 
 // --- Print tolerances ---
 PRINT_EPSILON = 0.01;       // overlap to avoid coplanar-face artifacts
